@@ -5,7 +5,7 @@ This module is designed to output an 80x24 Terminal to a VGA display.  It accept
 
 It can be accessed through four different serial protocols: UART, SPI, I2C, or PS/2 Keyboard.  It can be used as a shield for the Arduino Uno, or it can be used with any homebrew computer and is easily plugged in to a breadboard.<br>
 
-It uses the PIC24EP512GP202 microcontroller, running at 65 MIPS and containing 512KB of ROM and 48KB of RAM.  The only other IC on board is the LM1117 voltage regulator.  All components are through-hole for ease of soldering.<br>
+It uses the PIC24EP512GP202 microcontroller, running at 65 MIPS and containing 512KB of ROM and 48KB of RAM.  The only other IC on-board is the LM1117 voltage regulator.  All components are through-hole for ease of soldering.<br>
 
 <img src="Term24-Screen.jpg"><br>
 <img src="Term24-Front.png"><br>
