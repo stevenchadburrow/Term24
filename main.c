@@ -1,7 +1,7 @@
 
 // Term24 - VGA Terminal Module using the PIC24.
 // Supports: UART, SPI, I2C, and PS/2 Keyboard.
-// Includes color mode for 128x128 resultion at 256-colors, with scrolling or layers.
+// Includes color mode for 128x128 resultion at 128-colors, with scrolling or layers.
 
 /*
 XGA Signal 1024 x 768 @ 60 Hz timing
