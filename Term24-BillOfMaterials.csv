@@ -1,0 +1,27 @@
+Quantity,Part ID,Description
+1,PIC24EP512GP202-I/SP,PIC24 Microcontroller
+1,1-2199298-9 ,DIP-28 Socket
+1,LM1117T-3.3/NOPB ,LDO Voltage Regulator (3V3)
+1,L77HDE15SD1CH4FVGA,VGA Connector DE-15
+1,SJ1-3535NG,Audio 3.5mm Jack
+1,EG1224,Power Switch
+1,61729-1011RLF,USB-B Receptacle
+1,PTS645VK83-2 LFS,Tactile Switch (Right Angle)
+1,KMDGX-6S-BS ,PS/2 Keyboard Connector
+1,DE09-PT-1 ,Genesis Controller Port DE-9
+1,195-2MST ,2x DIP Switch (Piano)
+1,210-2MS ,2x DIP Switch (Slide)
+2,SSQ-106-02-T-S-RA ,6-Pin Socket Horizontal
+1,SSQ-108-02-F-S-RA ,8-Pin Socket Horizontal
+2,22-28-4202 ,20-Pin Header Vertical (Snapable)
+1,4609X-101-332LF ,8x Resistor Array 3.3K ohms
+4,ESK106M100AE3EA ,10uF Capacitor Electrolytic Radial
+1,UVR1H101MPD,100uF Capacitor Electrolytic Radial
+4,K104K15X7RF5UL2 ,0.1uF Capacitor Ceramic MLCC
+4,MFR-25FRF52-10K ,10K ohm resistor 1/4W 1%
+5,MFR-25FRF52-20K ,20K ohm resistor 1/4W 1%
+3,MFR-25FRF52-2K2 ,2.2K ohm resistor 1/4W 1%
+3,MFR-25FTF52-390R ,390 ohm resistor 1/4W 1%
+3,MFR-25FTF52-560R ,560 ohm resistor 1/4W 1%
+3,MFR-25FBF52-820R ,820 ohm resistor 1/4W 1%
+3,MFR-25FTF52-1K5 ,1.5K ohm resistor 1/4W 1%
