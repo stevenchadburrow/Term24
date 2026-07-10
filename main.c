@@ -81,29 +81,33 @@ volatile unsigned int __attribute__((address(0x3AA8))) term_scroll;
 volatile unsigned int __attribute__((address(0x3AAA))) term_orientation;
 volatile unsigned int __attribute__((address(0x3AAC))) term_cursor; 
 volatile unsigned int __attribute__((address(0x3AAE))) term_mode; // 0 = terminal, 1 = color
-volatile unsigned int __attribute__((address(0x3AB0))) term_last_channel = 0x000F;
-volatile unsigned int __attribute__((address(0x3AB2))) term_last_address = 0x0000;
-volatile unsigned int __attribute__((address(0x3AB4))) term_ps2_release = 0;
-volatile unsigned int __attribute__((address(0x3AB6))) term_ps2_extended = 0;
-volatile unsigned int __attribute__((address(0x3AB8))) term_ps2_shift = 0;
-volatile unsigned int __attribute__((address(0x3ABA))) term_ps2_capslock = 0;
-volatile unsigned int __attribute__((address(0x3ABC))) term_ps2_synced = 0;
-volatile unsigned int __attribute__((address(0x3ABE))) term_sequence = 0;
-volatile unsigned int __attribute__((address(0x3AC0))) term_command = 0;
-volatile unsigned int __attribute__((address(0x3AC2))) term_print = 0;
-volatile unsigned int __attribute__((address(0x3AC4))) term_dma_address = 0;
-volatile unsigned int __attribute__((address(0x3AC6))) term_dma_data = 0; 
-volatile unsigned int __attribute__((address(0x3AC8))) term_position;
-volatile unsigned char __attribute__((address(0x3ACA))) term_keycode[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+volatile unsigned int __attribute__((address(0x3AB0))) term_parallel;
+volatile unsigned int __attribute__((address(0x3AB2))) term_last_channel;
+volatile unsigned int __attribute__((address(0x3AB4))) term_last_address;
+volatile unsigned int __attribute__((address(0x3AB6))) term_ps2_release;
+volatile unsigned int __attribute__((address(0x3AB8))) term_ps2_extended;
+volatile unsigned int __attribute__((address(0x3ABA))) term_ps2_shift;
+volatile unsigned int __attribute__((address(0x3ABC))) term_ps2_capslock;
+volatile unsigned int __attribute__((address(0x3ABE))) term_ps2_synced;
+volatile unsigned int __attribute__((address(0x3AC0))) term_sequence;
+volatile unsigned int __attribute__((address(0x3AC2))) term_command;
+volatile unsigned int __attribute__((address(0x3AC4))) term_print;
+volatile unsigned int __attribute__((address(0x3AC6))) term_dma_address;
+volatile unsigned int __attribute__((address(0x3AC8))) term_dma_data; 
+volatile unsigned int __attribute__((address(0x3ACA))) term_position;
+volatile unsigned int __attribute__((address(0x3ACC))) term_setting_cursor;
+volatile unsigned int __attribute__((address(0x3ACE))) term_setting_echo;
+volatile unsigned char __attribute__((address(0x3AD0))) term_keycode[8];
 // unused memory here
 volatile unsigned char __attribute__((address(0x3B00))) term_ps2_conversion[256];
 volatile unsigned int __attribute__((address(0x3C00))) term_array[256];
+// unused memory here (generally used by heap, 512 bytes)
 volatile unsigned char __attribute__((address(0x4000))) term_memory[2048];
 volatile unsigned char __attribute__((address(0x4800))) term_map[2048];
 volatile unsigned char __attribute__((address(0x5000))) term_color[12288];
 volatile __eds__ unsigned char __attribute__((address(0x8000), eds)) term_color_eds[20480];
 
-void term_data(unsigned int a, unsigned char d)
+void __attribute__((section("usercode"))) term_data(unsigned int a, unsigned char d)
 {
 	if (a >= 0x4000 && a < 0x4800)
 	{
@@ -123,11 +127,11 @@ void term_data(unsigned int a, unsigned char d)
 	}
 };
 
-extern void TermScanline(void);
+extern void __attribute__((section("usercode"))) TermScanline(void);
 
 // interrupt latency is 10 cycles
 // for some reason, having auto_psv instead of no_auto_psv makes this work?!
-void __attribute__((interrupt, auto_psv, address(0x000200))) _T1Interrupt(void)
+void __attribute__((interrupt, auto_psv, section("usercode"))) _T1Interrupt(void)
 {
 	// C always includes:
 	// lnk #0
@@ -140,7 +144,7 @@ void __attribute__((interrupt, auto_psv, address(0x000200))) _T1Interrupt(void)
 };
 
 // text character mapping, 8-bytes per character
-const __prog__ unsigned char __attribute__((space(prog))) text_map[768] = {
+const __prog__ unsigned char __attribute__((space(prog), section("usercode"))) text_map[768] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 	0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x20, 0x00, 
 	0x50, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -240,7 +244,7 @@ const __prog__ unsigned char __attribute__((space(prog))) text_map[768] = {
 };
 
 // modified by-hand some
-const __prog__ unsigned char __attribute__((space(prog))) text_conversion[256] = {
+const __prog__ unsigned char __attribute__((space(prog), section("usercode"))) text_conversion[256] = {
 	// regular
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 0x
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0x60, 0x00, 
@@ -277,12 +281,13 @@ const __prog__ unsigned char __attribute__((space(prog))) text_conversion[256] =
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
-void text_draw(int x, int y, unsigned char c)
+
+void __attribute__((section("usercode"))) text_draw(int x, int y, unsigned char c)
 {
 	term_memory[y*80+x] = (unsigned int)c;
 };
 
-void text_string(int x, int y, char *s)
+void __attribute__((section("usercode"))) text_string(int x, int y, const __prog__ char *s)
 {
 	for (int i=0; i<80; i++)
 	{
@@ -292,7 +297,7 @@ void text_string(int x, int y, char *s)
 	}
 };
 
-char text_high_nibble(unsigned char c)
+char __attribute__((section("usercode"))) text_high_nibble(unsigned char c)
 {
 	if ((c & 0xF0) >= 0xA0)
 	{
@@ -304,7 +309,7 @@ char text_high_nibble(unsigned char c)
 	}
 };
 
-char text_low_nibble(unsigned char c)
+char __attribute__((section("usercode"))) text_low_nibble(unsigned char c)
 {
 	if ((c & 0x0F) >= 0x0A)
 	{
@@ -316,67 +321,50 @@ char text_low_nibble(unsigned char c)
 	}
 };
 
-void __attribute__((interrupt, auto_psv)) _U1RXInterrupt(void)
+void __attribute__((interrupt, auto_psv, section("usercode"))) _U1RXInterrupt(void)
 {
 	IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag
 };
 
-void __attribute__((interrupt, auto_psv)) _U1TXInterrupt(void)
+void __attribute__((interrupt, auto_psv, section("usercode"))) _U1TXInterrupt(void)
 {
 	IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag
 };
 
-void __attribute__((interrupt, auto_psv)) _U2RXInterrupt(void)
+void __attribute__((interrupt, auto_psv, section("usercode"))) _SPI2Interrupt(void)
 {
-	IFS1bits.U2RXIF = 0; // Clear RX Interrupt flag
-};
+	IFS2bits.SPI2IF = 0; // clear flag
+}
 
-void __attribute__((interrupt, auto_psv)) _U2TXInterrupt(void)
+void __attribute__((interrupt, auto_psv, section("usercode"))) _INT1Interrupt(void)
 {
-	IFS1bits.U2TXIF = 0; // Clear TX Interrupt flag
-};
+	IFS1bits.INT1IF = 0; // clear flag
 
-void __attribute__((interrupt, auto_psv)) _DMA0Interrupt(void)
+	unsigned int pa = (PORTA & 0x000F); // get port values
+	unsigned int pb = ((PORTB & 0x003C) << 2);
+	
+	term_last_channel = 0x0000; // indicate channel use
+	term_last_address += 2; // increment channel address
+	
+	term_array[term_last_address] = (pb | pa); // store in array
+}
+
+void __attribute__((interrupt, auto_psv, section("usercode"))) _DMA0Interrupt(void)
 {	
 	IFS0bits.DMA0IF = 0; // clear flag
 };
 
-void __attribute__((interrupt, auto_psv)) _DMA1Interrupt(void)
-{	
-	IFS0bits.DMA1IF = 0; // clear flag
-};
-
-int main()
+void __attribute__((section("usercode"))) setup()
 {
-	// internal settings that might be changed
-	int setting_cursor = 1;
-	int setting_echo = 1;
-
-	// set Port A to defaults
-	ANSELA = 0x0000;
+	// default values to allow h-sync and v-sync as output with mono output
+	TRISA = 0xFFEF;
 	LATA = 0x0000;
-	TRISA = 0x0000;
-	CNPUA = 0x0000;
-	CNPDB = 0x0000;
-
-	// set Port B to defaults
-	ANSELB = 0x0000;
-	LATB = 0x0000;
 	TRISB = 0x7F7F;
-	CNPUB = 0x0000;
-	CNPDB = 0x0000;
+	LATB = 0x0000;
 
-	// disable watchdog timer
-	PTGCONbits.PTGWDT = 0x0;
-
-	// read external switches for different input types
-	int option = (PORTB & 0x03);
-
-	// Configure OSC tuner, PLL prescaler, PLL postscaler, PLL divisor
-	OSCTUN = 0x0021; // TUN = -31
-	PLLFBD = 0x00B1; // PLLDIV = 177
-	CLKDIVbits.PLLPRE = 0x3; // PLLPRE = 3
-	CLKDIVbits.PLLPOST = 0x0; // PLLPOST = 0
+	// internal settings that might be changed
+	term_setting_cursor = 1;
+	term_setting_echo = 1;
 
 	// sets Output Compare to appropriate pins
 	RPOR2 = (RPOR2  & 0x00FF) | 0x1000; // OC1 / V-SYNC on RP39
@@ -415,19 +403,20 @@ int main()
 	T1CONbits.TCKPS = 0x00; // no prescalar
 	TMR1 = 0x053F; // timer counter, horizontal adjustment
 	PR1 = 0x053F; // timer period on last line of v-blank (minus one!)
-	IPC0bits.T1IP = 0x01; // interrupt priority
+	IPC0bits.T1IP = 0x07; // highest interrupt priority
 	IFS0bits.T1IF = 0; // interrupt flag
 	IEC0bits.T1IE = 1; // enable interrupt
 
 	// turn on interrupts globally here!
-	SRbits.IPL = 0x00;
-	CORCONbits.IPL3 = 0;
-	INTCON1 = 0;
+	SRbits.IPL = 0x00; // cpu interrupt priority
+	CORCONbits.IPL3 = 0; // cpu interrupt 7 or less
+	INTCON1 = 0; // clear registers
 	INTCON2 = 0;
 	INTCON3 = 0;
 	INTCON4 = 0;
-	INTTREG = 0x0000;
-	INTCON2bits.GIE = 1; 
+	INTTREG = 0x0000; // clear interrupt vectors
+	INTCON1bits.NSTDIS = 0; // nested interrupts enabled
+	INTCON2bits.GIE = 1; // global interrupts enabled
 
 	// clear video memory
 	for (int i=0; i<12288; i++)
@@ -506,17 +495,66 @@ int main()
 	asm("mov.w 0x0104, w0");
 	asm("ior.w w0, w1, w0");
 	asm("mov.w w0, 0x0104"); // timer 1 on (interrupt)
+};
 
-	text_string(0, 24, "PIC24 Terminal\\");
-	text_string(20, 24, "ESC;H for Help\\");
+void __attribute__((section("usercode"))) run()
+{
+	text_string(0, 24, "Term24\\");
+	text_string(10, 24, "ESC;H for Help\\");
+
+	term_parallel = 0;
+	term_last_channel = 0x000F;
+	term_last_address = 0x0000;
+	term_ps2_release = 0;
+	term_ps2_extended = 0;
+	term_ps2_shift = 0;
+	term_ps2_capslock = 0;
+	term_ps2_synced = 0;
+	term_sequence = 0;
+	term_command = 0;
+	term_print = 0;
+	term_dma_address = 0;
+	term_dma_data = 0;
+	term_keycode[0] = 0;
+	term_keycode[1] = 0;
+	term_keycode[2] = 0;
+	term_keycode[3] = 0;
+	term_keycode[4] = 0;
+	term_keycode[5] = 0;
+	term_keycode[6] = 0;
+	term_keycode[7] = 0;
+
+	term_scroll = 0;
+	term_cursor = 1840;
+	if (term_setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
+
+	CNPUB = 0x000C; // pull-up on RB3 and RB2
+
+	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
+
+	// read external switches for different input types
+	int option = ((((PORTB & 0x000C) >> 2) ^ 0x0003) & 0x0003);
+
+	CNPUB = 0x0000; // turn off pull-ups on RB3 and RB2
 
 	if (option == 0) // UART
 	{
+		TRISA = 0x000F;
+		LATA = 0x0000;
+		TRISB = 0x7F3F;
+		LATB = 0x0000;
+
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
 		RPOR2 = (RPOR2 & 0xFF00) | 0x0001; // UART1-TX on RP38
 
 		// set up UART1
+		IEC0bits.U1TXIE = 0; // disable transmit interrupts
+		IEC0bits.U1RXIE = 0; // disable receive interrupts
+		IFS0bits.U1TXIF = 0; // clear flag
+		IFS0bits.U1RXIF = 0; // clear flag
+		IPC2bits.U1RXIP = 0x01; // lowest interrupt priority 
+		IPC3bits.U1TXIP = 0x01; // lowest interrupt priority 
 		U1MODE = 0x0000; // disable and clear everything, 8-bit, no parity, 1 stop bit, etc.
 		U1STA = 0x0000; // clear all flags
 		U1BRG = (65000000 / 9600) / 16 - 1; // baud rate divisor = (65000000 / 9600) / 16 - 1 = 422.177 (or 115200 baud = 34.2647)
@@ -540,23 +578,26 @@ int main()
 		U1TXREG = '\r'; // dummy transfers
 		U1TXREG = '\n';
 
-		text_string(40, 24, "UART:9600-8-N-1\\");
+		text_string(30, 24, "UART: 9600-8-N-1\\");
 	}
-	else if (option == 1) // SPI
+	else if (option == 1) // PS/2
 	{
+		TRISA = 0x000F;
+		LATA = 0x0000;
+		TRISB = 0x7F7F;
+		LATB = 0x0000;
 
-	}
-	else if (option == 2) // I2C
-	{
-
-	}
-	else if (option == 3) // PS/2
-	{
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
 		//RPOR2 = (RPOR2 & 0xFF00) | 0x0001; // UART1-TX on RP38
 
 		// set up UART1
+		IEC0bits.U1TXIE = 0; // disable transmit interrupts
+		IEC0bits.U1RXIE = 0; // disable receive interrupts
+		IFS0bits.U1TXIF = 0; // clear flag
+		IFS0bits.U1RXIF = 0; // clear flag 
+		IPC2bits.U1RXIP = 0x01; // lowest interrupt priority 
+		IPC3bits.U1TXIP = 0x01; // lowest interrupt priority 
 		U1MODE = 0x0004; // disable and clear everything, 8-bit, odd parity, 1 stop bits, etc.
 		U1STA = 0x0000; // clear all flags
 		U1BRG = (65000000 / 16667) / 16 - 1; // baud rate divisor, will change later
@@ -565,7 +606,7 @@ int main()
 		//IEC0bits.U1TXIE = 1; // enable transmit interrupts
 		//IEC0bits.U1RXIE = 1; // enable receive interrupts
 
-		// set up DMA1 with UART1
+		// set up DMA0 with UART1
 		DMA0CON = 0x0000; // continuous, no ping-pong, word-aligned
 		DMA0CNT = 255; // 256 bytes in array
 		DMA0REQ = 0x000B; // UART1-RX
@@ -580,12 +621,66 @@ int main()
 		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 		U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
 
-		text_string(40, 24, "PS/2:Press = to sync\\");
+		text_string(30, 24, "PS/2: Press = to sync\\");
 	}
+	else if (option == 2) // SPI
+	{
+		TRISA = 0x000F;
+		LATA = 0x0000;
+		TRISB = 0x7F6F;
+		LATB = 0x0000;
 
-	term_scroll = 0;
-	term_cursor = 1840;
-	if (setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
+		// sets SPI2 to appropriate pins
+		RPINR22 = 0x2625; // SPI2-CLK on RP38 and SPI2-MOSI on RP37
+		RPOR2 = (RPOR2 & 0xFF00) | 0x0009; // SPI2-CLK on RP38 (needed?)
+		RPOR1 = (RPOR1 & 0xFF00) | 0x0008; // SPI2-MISO on RP36 (needed?)
+
+		// set up SPI2
+		SPI2BUF = 0; // clear buffer first
+		IFS2bits.SPI2IF = 0; // clear flag
+		IEC2bits.SPI2IE = 0; // disable interrupts
+		IPC8bits.SPI2IP = 0x01; // lowest interrupt priority 
+		SPI2STAT = 0x0001; // interrupt when data on receive buffer 
+		SPI2CON1 = 0x0000; // 8-bit slave mode
+		SPI2CON2 = 0x0001; // enhanced buffer enabled
+		IFS2bits.SPI2IF = 0; // clear flag
+		//IEC2bits.SPI2IE = 1; // enable interrupts
+	
+		// set up DMA0 with UART1
+		DMA0CON = 0x0000; // continuous, no ping-pong, word-aligned
+		DMA0CNT = 255; // 256 bytes in array
+		DMA0REQ = 0x0021; // SPI2 Transfer Done
+		DMA0PAD = (volatile unsigned int)&SPI2BUF;
+		DMA0STAL = (volatile unsigned int)&term_array;
+		DMA0STAH = 0x0000;
+		IFS0bits.DMA0IF = 0;
+		IEC0bits.DMA0IE = 1;
+		DMA0CONbits.CHEN = 1;
+
+		text_string(30, 24, "SPI\\");
+	}
+	else if (option == 3) // PARALLEL
+	{
+		TRISA = 0x000F;
+		LATA = 0x0000;
+		TRISB = 0x7F7F;
+		LATB = 0x0000;
+
+		// sets INT1 to appropriate pins
+		RPINR0 = 0x2600; // INT1 on RP38
+		
+		// set up INT1
+		IFS1bits.INT1IF = 0; // clear flag
+		IEC1bits.INT1IE = 0; // disable interrupts
+		INTCON2bits.INT1EP = 1; // interrupt on negative edge
+		IPC5bits.INT1IP = 0x02; // near-lowest interrupt priority 
+		IFS1bits.INT1IF = 0; // clear flag
+		IEC1bits.INT1IE = 1; // enable interrupts
+
+		term_parallel = 1;
+
+		text_string(30, 24, "PARALLEL\\");
+	}
 
 	while (1)
 	{
@@ -596,15 +691,15 @@ int main()
 		{
 			if ((((term_position) & 0x00FF) << 1) != term_last_address)
 			{
-				if (option == 0) // UART
+				if (option == 0 || option == 2 || option == 3) // UART/SPI/PARALLEL
 				{
 					if (term_dma_data == 0)
 					{
 						term_keycode[term_sequence] = (term_array[(term_position & 0x00FF)] & 0x00FF);
 
-						if (setting_echo > 0 && term_command != 2)
+						if (term_setting_echo > 0 && term_command != 2)
 						{
-							U1TXREG = term_keycode[term_sequence];
+							if (option == 0) U1TXREG = term_keycode[term_sequence];
 						}
 						term_print = 1;
 					}
@@ -619,15 +714,7 @@ int main()
 					term_position++;
 					if (term_position >= 256) term_position -= 256;
 				}
-				else if (option == 1) // SPI
-				{
-
-				}
-				else if (option == 2) // I2C
-				{
-
-				}
-				else if (option == 3) // PS/2
+				else if (option == 1) // PS/2
 				{
 					if (U1MODEbits.ABAUD == 0 && term_ps2_synced == 0) term_ps2_synced = 1;
 
@@ -675,11 +762,14 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x12) // DC2 = arrow down
@@ -691,11 +781,14 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x13) // DC3 = arrow right
@@ -707,11 +800,14 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x14) // DC3 = arrow left
@@ -723,11 +819,14 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x17) // ETB = end
@@ -739,11 +838,14 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x19) // EM = home
@@ -755,18 +857,24 @@ int main()
 									term_command = 1;
 									term_sequence = 2;
 
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[0];
-										U1TXREG = term_keycode[1];
-										U1TXREG = term_keycode[2];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[0];
+											U1TXREG = term_keycode[1];
+											U1TXREG = term_keycode[2];
+										}
 									}
 								}
 								else
 								{
-									if (setting_echo > 0 && term_command != 2)
+									if (term_setting_echo > 0 && term_command != 2)
 									{
-										U1TXREG = term_keycode[term_sequence];
+										if (option == 0)
+										{
+											U1TXREG = term_keycode[term_sequence];
+										}
 									}
 								}
 								term_print = 1;
@@ -787,7 +895,7 @@ int main()
 		{
 			term_print = 0;
 
-			if (setting_cursor > 0 && term_cursor < 1920) 
+			if (term_setting_cursor > 0 && term_cursor < 1920) 
 			{
 				term_memory[(term_scroll*80+term_cursor)%1920] = ((term_memory[(term_scroll*80+term_cursor)%1920] + 0x80) & 0x00FF);
 			}
@@ -1455,12 +1563,20 @@ int main()
 				{
 					term_mode = 0;
 
+					// turn off colors
+					TRISB = (TRISB & 0x00FF) | 0x7F00;
+					PORTB = 0x0000;
+
 					term_command = 0;
 					term_sequence = 0;
 				}
 				else if (term_sequence == 2 && term_keycode[2] == 'C')
 				{
 					term_mode = 1;
+
+					// turn on colors
+					TRISB = (TRISB & 0x00FF) | 0x8000;
+					PORTB = 0x0000;
 
 					term_command = 0;
 					term_sequence = 0;
@@ -1490,12 +1606,324 @@ int main()
 				}
 			}
 
-			if (setting_cursor > 0 && term_cursor < 1920) 
+			if (term_setting_cursor > 0 && term_cursor < 1920) 
 			{
 				term_memory[(term_scroll*80+term_cursor)%1920] = ((term_memory[(term_scroll*80+term_cursor)%1920] + 0x80) & 0x00FF);
 			}
 		}
 	}
+};
+
+void __attribute__((address(0x010000))) entry()
+{
+	setup();
+	run();
+};
+
+#define CONVERT(h,l) \
+	((unsigned char)(h >= 'A' && h <= 'F' ? ((h - 'A' + 10) << 4) : \
+	(h >= 'a' && h <= 'f' ? ((h - 'a' + 10) << 4) : \
+	(h >= '0' && h <= '9' ? ((h - '0') << 4) : 0x00))) | \
+	(unsigned char)(l >= 'A' && l <= 'F' ? ((l - 'A' + 10)) : \
+	(l >= 'a' && l <= 'f' ? ((l - 'a' + 10)) : \
+	(l >= '0' && l <= '9' ? ((l - '0')) : 0x00))))
+
+/*	
+static inline unsigned char CONVERT(char h, char l)
+{
+	unsigned char v = 0x00;
+
+	if (h >= 'A' && h <= 'F') v += ((h - 'A' + 10) << 4);
+	else if (h >= 'a' && h <= 'f') v += ((h - 'a' + 10) << 4);
+	else if (h >= '0' && h <= '9') v += ((h - '0') << 4);
+
+	if (l >= 'A' && l <= 'F') v += ((l - 'A' + 10));
+	else if (l >= 'a' && l <= 'f') v += ((l - 'a' + 10));
+	else if (l >= '0' && l <= '9') v += ((l - '0'));
+
+	return v;
+};
+*/
+
+int __attribute__((address(0x000200))) main()
+{
+	// set Port A to defaults
+	ANSELA = 0x0000;
+	LATA = 0x0000;
+	TRISA = 0xFFFF;
+	CNPUA = 0x0000;
+	CNPDA = 0x0000;
+
+	// set Port B to defaults
+	ANSELB = 0x0000;
+	LATB = 0x0000;
+	TRISB = 0xFFFF;
+	CNPUB = 0x0000;
+	CNPDB = 0x0000;
+
+	// disable watchdog timer
+	PTGCONbits.PTGWDT = 0x0;
+
+	// Configure OSC tuner, PLL prescaler, PLL postscaler, PLL divisor
+	// This makes it run at 65 MIPS
+	OSCTUN = 0x0021; // TUN = -31
+	PLLFBD = 0x00B1; // PLLDIV = 177
+	CLKDIVbits.PLLPRE = 0x3; // PLLPRE = 3
+	CLKDIVbits.PLLPOST = 0x0; // PLLPOST = 0
+
+	CNPUB = 0x0010; // pull-up on RB4
+
+	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
+
+	// check if RB4 is grounded, and if so, run firmware update
+	int update = (PORTB & 0x0010);
+
+	CNPUB = 0x0000; // disable pull-up on RB4
+
+	// firmware update uses UART at 9600 baud, will rewrite all but main() essentially
+	if (update == 0x0000)
+	{
+		// output on RB6 (RP38)
+		TRISB = 0xFFBF;
+		LATB = 0x0000;
+
+		// sets UART1 to appropriate pins
+		RPINR18 = 0x0025; // UART1-RX on RP37
+		RPOR2 = (RPOR2 & 0xFF00) | 0x0001; // UART1-TX on RP38
+
+		// set up UART1
+		IEC0bits.U1TXIE = 0; // disable transmit interrupts
+		IEC0bits.U1RXIE = 0; // disable receive interrupts
+		IFS0bits.U1TXIF = 0; // clear flag
+		IFS0bits.U1RXIF = 0; // clear flag
+		IPC2bits.U1RXIP = 0x01; // lowest interrupt priority 
+		IPC3bits.U1TXIP = 0x01; // lowest interrupt priority 
+		U1MODE = 0x0000; // disable and clear everything, 8-bit, no parity, 1 stop bit, etc.
+		U1STA = 0x0000; // clear all flags
+		U1BRG = (65000000 / 9600) / 16 - 1; // baud rate divisor = (65000000 / 9600) / 16 - 1 = 422.177
+		U1MODEbits.UARTEN = 1; // enable uart module (needs to be on before UTXEN is enabled)
+		U1STAbits.UTXEN = 1; // enable transmit
+		//IEC0bits.U1TXIE = 1; // enable transmit interrupts
+		//IEC0bits.U1RXIE = 1; // enable receive interrupts
+
+		uint16_t save;
+
+		for (int i=1; i<=4; i++) // 0x010000 through 0x04FFFF
+		{
+			for (unsigned int j=0; j<64; j++)
+			{
+				// erase page operation
+				NVMCON = 0x4003; // Set ERASE, WREN and configure NVMOP for page erase
+				NVMADR = (unsigned int)(j << 10); // lower address
+				NVMADRU = (unsigned int)i; // upper address
+				save = INTCON2; // Save interrupt status
+				__builtin_disable_interrupts(); // Disable interrupts for NVM unlock
+				__builtin_write_NVM(); // Start write cycle (sends 0x55 and 0xAA to NVMKEY and sets NVMCON.WR)
+				while(NVMCONbits.WR == 1) { } // Wait for write cycle to finish
+				INTCON2 = save; // Restore interrupt status
+			}
+		}
+
+		U1TXREG = '?'; // dummy transfer
+
+		unsigned char buffer;
+		unsigned int word;
+		unsigned char nibble[2];
+
+		unsigned char length;
+		unsigned int address;
+		unsigned char type;
+
+		unsigned int ext_address;
+		unsigned int prog_address;
+		unsigned char prog_data[16];
+		unsigned char prog_pos = 0;
+
+		unsigned char loop = 1;
+
+		while (loop > 0)
+		{
+			while (U1STAbits.URXDA == 0) { }
+			buffer = U1RXREG;
+
+			// code
+			if (buffer == ':')
+			{
+				// length
+				while (U1STAbits.URXDA == 0) { }
+				nibble[0] = U1RXREG;
+				while (U1STAbits.URXDA == 0) { }
+				nibble[1] = U1RXREG;
+				length = CONVERT(nibble[0], nibble[1]);
+
+				if (length > 0)
+				{
+					// address
+					while (U1STAbits.URXDA == 0) { }
+					nibble[0] = U1RXREG;
+					while (U1STAbits.URXDA == 0) { }
+					nibble[1] = U1RXREG;
+					address = (unsigned int)(CONVERT(nibble[0], nibble[1]) << 8);
+					while (U1STAbits.URXDA == 0) { }
+					nibble[0] = U1RXREG;
+					while (U1STAbits.URXDA == 0) { }
+					nibble[1] = U1RXREG;
+					address += (unsigned int)(CONVERT(nibble[0], nibble[1]));
+
+					// type
+					while (U1STAbits.URXDA == 0) { }
+					nibble[0] = U1RXREG;
+					while (U1STAbits.URXDA == 0) { }
+					nibble[1] = U1RXREG;
+					type = CONVERT(nibble[0], nibble[1]);
+
+					if (type == 0x00) // data
+					{
+						if (prog_pos == 0) prog_address = address;
+
+						for (int i=0; i<(length<<1); i++)
+						{
+							while (U1STAbits.URXDA == 0) { }
+							prog_data[prog_pos] = U1RXREG;
+							prog_pos++;
+							if (prog_pos >= 16)
+							{
+								if ((ext_address >> 1) >= 0x0001 && (ext_address >> 1) <= 0x0004) // keeps from overwriting important code
+								{
+									// write page operation
+									NVMCON = 0x4001; // Set WREN and word program mode
+									TBLPAG = 0xFA; // Must be 0xFA for some reason!
+									NVMADR = (prog_address >> 1); // lower address
+									NVMADRU = (ext_address >> 1); // upper address
+									word = ((unsigned int)CONVERT(prog_data[2], prog_data[3]) << 8);
+									word += (unsigned int)(CONVERT(prog_data[0], prog_data[1]));
+									__builtin_tblwtl(0x0, word);
+									word = ((unsigned int)CONVERT(prog_data[6], prog_data[7]) << 8);
+									word += (unsigned int)(CONVERT(prog_data[4], prog_data[5]));
+									__builtin_tblwth(0x0, word);
+									word = ((unsigned int)CONVERT(prog_data[10], prog_data[11]) << 8);
+									word += (unsigned int)(CONVERT(prog_data[8], prog_data[9]));
+									__builtin_tblwtl(0x2, word);
+									word = ((unsigned int)CONVERT(prog_data[14], prog_data[15]) << 8);
+									word += (unsigned int)(CONVERT(prog_data[12], prog_data[13]));
+									__builtin_tblwth(0x2, word);
+									save = INTCON2;
+									__builtin_disable_interrupts(); // Disable interrupts for NVM unlock sequence
+									__builtin_write_NVM(); // initiate write
+									while(NVMCONbits.WR == 1);
+									INTCON2 = save;
+								}
+
+								prog_pos = 0;
+								prog_address = address + (i>>1) + 1;
+							}
+						}
+
+						// checksum
+						while (U1STAbits.URXDA == 0) { }
+						nibble[0] = U1RXREG;
+						while (U1STAbits.URXDA == 0) { }
+						nibble[1] = U1RXREG;
+					}
+					else if (type == 0x04) // ext_address
+					{
+						if (prog_pos > 0)
+						{
+							for (int i=prog_pos; i<16; i++) prog_data[i] = 'F';
+
+							if ((ext_address >> 1) >= 0x0001 && (ext_address >> 1) <= 0x0004) // keeps from overwriting important code
+							{
+								// write page operation
+								NVMCON = 0x4001; // Set WREN and word program mode
+								TBLPAG = 0xFA; // Must be 0xFA for some reason!
+								NVMADR = (prog_address >> 1); // lower address
+								NVMADRU = (ext_address >> 1); // upper address
+								word = ((unsigned int)CONVERT(prog_data[2], prog_data[3]) << 8);
+								word += (unsigned int)(CONVERT(prog_data[0], prog_data[1]));
+								__builtin_tblwtl(0x0, word);
+								word = ((unsigned int)CONVERT(prog_data[6], prog_data[7]) << 8);
+								word += (unsigned int)(CONVERT(prog_data[4], prog_data[5]));
+								__builtin_tblwth(0x0, word);
+								word = ((unsigned int)CONVERT(prog_data[10], prog_data[11]) << 8);
+								word += (unsigned int)(CONVERT(prog_data[8], prog_data[9]));
+								__builtin_tblwtl(0x2, word);
+								word = ((unsigned int)CONVERT(prog_data[14], prog_data[15]) << 8);
+								word += (unsigned int)(CONVERT(prog_data[12], prog_data[13]));
+								__builtin_tblwth(0x2, word);
+								save = INTCON2;
+								__builtin_disable_interrupts(); // Disable interrupts for NVM unlock sequence
+								__builtin_write_NVM(); // initiate write
+								while(NVMCONbits.WR == 1);
+								INTCON2 = save;
+							}
+
+							prog_pos = 0;
+						}
+			
+						// ext_address
+						while (U1STAbits.URXDA == 0) { }
+						nibble[0] = U1RXREG;
+						while (U1STAbits.URXDA == 0) { }
+						nibble[1] = U1RXREG;
+						ext_address = (unsigned int)(CONVERT(nibble[0], nibble[1]) << 8);
+						while (U1STAbits.URXDA == 0) { }
+						nibble[0] = U1RXREG;
+						while (U1STAbits.URXDA == 0) { }
+						nibble[1] = U1RXREG;
+						ext_address += (unsigned int)(CONVERT(nibble[0], nibble[1]));
+
+						// checksum
+						while (U1STAbits.URXDA == 0) { }
+						nibble[0] = U1RXREG;
+						while (U1STAbits.URXDA == 0) { }
+						nibble[1] = U1RXREG;
+					}
+				}
+				else
+				{
+					loop = 0;
+			
+					if (prog_pos > 0)
+					{
+						for (int i=prog_pos; i<16; i++) prog_data[i] = 'F';
+
+						if ((ext_address >> 1) >= 0x0001 && (ext_address >> 1) <= 0x0004) // keeps from overwriting important code
+						{
+							// write page operation
+							NVMCON = 0x4001; // Set WREN and word program mode
+							TBLPAG = 0xFA; // Must be 0xFA for some reason!
+							NVMADR = (prog_address >> 1); // lower address
+							NVMADRU = (ext_address >> 1); // upper address
+							word = ((unsigned int)CONVERT(prog_data[2], prog_data[3]) << 8);
+							word += (unsigned int)(CONVERT(prog_data[0], prog_data[1]));
+							__builtin_tblwtl(0x0, word);
+							word = ((unsigned int)CONVERT(prog_data[6], prog_data[7]) << 8);
+							word += (unsigned int)(CONVERT(prog_data[4], prog_data[5]));
+							__builtin_tblwth(0x0, word);
+							word = ((unsigned int)CONVERT(prog_data[10], prog_data[11]) << 8);
+							word += (unsigned int)(CONVERT(prog_data[8], prog_data[9]));
+							__builtin_tblwtl(0x2, word);
+							word = ((unsigned int)CONVERT(prog_data[14], prog_data[15]) << 8);
+							word += (unsigned int)(CONVERT(prog_data[12], prog_data[13]));
+							__builtin_tblwth(0x2, word);
+							save = INTCON2;
+							__builtin_disable_interrupts(); // Disable interrupts for NVM unlock sequence
+							__builtin_write_NVM(); // initiate write
+							while(NVMCONbits.WR == 1);
+							INTCON2 = save;
+						}
+
+						prog_pos = 0;
+					}
+				}
+			}
+		}
+
+		// reset system
+		asm("RESET");
+	}
+
+	entry();	
 
 	return 1;
 }

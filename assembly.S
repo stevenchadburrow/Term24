@@ -18,6 +18,7 @@
 .equ term_color_eds, 0x8000
 
 
+.section usercode code
 .global _TermScanline
 _TermScanline:
 	push w0
@@ -191,8 +192,9 @@ TermScanline_Blank:
 
 	; only show black
 	mov.w #0x0000, w0
-	mov.b WREG, 0x0E13 
+	mov.b WREG, 0x0E13 	
 
+TermScanline_Exit:
 	pop w5
 	pop w4
 	pop w3
@@ -274,14 +276,7 @@ TermScanline_Layers:
 	pop DSWPAG
 	pop DSRPAG 
 
-	pop w5
-	pop w4
-	pop w3
-	pop w2
-	pop w1
-	pop w0
-
-	return
+	bra TermScanline_Exit
 
 TermScanline_Vertical:
 	; shift scanline distance
@@ -324,14 +319,7 @@ TermScanline_Vertical:
 	pop DSWPAG
 	pop DSRPAG 
 
-	pop w5
-	pop w4
-	pop w3
-	pop w2
-	pop w1
-	pop w0
-
-	return
+	bra TermScanline_Exit
 
 TermScanline_Horizontal:
 	; find pixel address
@@ -371,13 +359,6 @@ TermScanline_Horizontal:
 	pop DSWPAG
 	pop DSRPAG 
 
-	pop w5
-	pop w4
-	pop w3
-	pop w2
-	pop w1
-	pop w0
-
-	return
+	bra TermScanline_Exit
 
 
