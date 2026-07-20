@@ -30,17 +30,17 @@ Back porch	29	0.59963076923077
 Whole frame	806	16.6656
 */
 
-// PIC24EP512GP204 Configuration Bit Settings
+// PIC24EP512GP202 Configuration Bit Settings
 
 // 'C' source line config statements
 
 // FICD
-#pragma config ICS = PGD1               // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
+#pragma config ICS = PGD3               // ICD Communication Channel Select bits (Communicate on PGEC3 and PGED3)
 #pragma config JTAGEN = OFF             // JTAG Enable bit (JTAG is disabled)
 
 // FPOR
 #pragma config ALTI2C1 = OFF            // Alternate I2C1 pins (I2C1 mapped to SDA1/SCL1 pins)
-#pragma config ALTI2C2 = OFF            // Alternate I2C2 pins (I2C2 mapped to SDA2/SCL2 pins)
+#pragma config ALTI2C2 = ON             // Alternate I2C2 pins (I2C2 mapped to ASDA2/ASCL2 pins)
 #pragma config WDTWIN = WIN25           // Watchdog Window Select bits (WDT Window is 25% of WDT period)
 
 // FWDT
@@ -68,6 +68,7 @@ Whole frame	806	16.6656
 // Use project enums instead of #define for ON and OFF.
 
 #include <xc.h>
+
 #include <p24Exxxx.h>
 
 // unused memory here
@@ -131,7 +132,7 @@ extern void __attribute__((section("usercode"))) TermScanline(void);
 
 // interrupt latency is 10 cycles
 // for some reason, having auto_psv instead of no_auto_psv makes this work?!
-void __attribute__((interrupt, auto_psv, section("usercode"))) _T1Interrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010600))) _T1Interrupt(void)
 {
 	// C always includes:
 	// lnk #0
@@ -282,7 +283,7 @@ const __prog__ unsigned char __attribute__((space(prog), section("usercode"))) t
 };
 
 
-void __attribute__((section("usercode"))) text_draw(int x, int y, unsigned char c)
+void __attribute__((section("usercode"))) text_character(int x, int y, unsigned char c)
 {
 	term_memory[y*80+x] = (unsigned int)c;
 };
@@ -293,7 +294,7 @@ void __attribute__((section("usercode"))) text_string(int x, int y, const __prog
 	{
 		if (s[i] == '\\') return;
 
-		text_draw(x+i, y, s[i]);
+		text_character(x+i, y, s[i]);
 	}
 };
 
@@ -321,22 +322,22 @@ char __attribute__((section("usercode"))) text_low_nibble(unsigned char c)
 	}
 };
 
-void __attribute__((interrupt, auto_psv, section("usercode"))) _U1RXInterrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010100))) _U1RXInterrupt(void)
 {
 	IFS0bits.U1RXIF = 0; // Clear RX Interrupt flag
 };
 
-void __attribute__((interrupt, auto_psv, section("usercode"))) _U1TXInterrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010200))) _U1TXInterrupt(void)
 {
 	IFS0bits.U1TXIF = 0; // Clear TX Interrupt flag
 };
 
-void __attribute__((interrupt, auto_psv, section("usercode"))) _SPI2Interrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010300))) _SPI2Interrupt(void)
 {
 	IFS2bits.SPI2IF = 0; // clear flag
 }
 
-void __attribute__((interrupt, auto_psv, section("usercode"))) _INT1Interrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010400))) _INT1Interrupt(void)
 {
 	IFS1bits.INT1IF = 0; // clear flag
 
@@ -349,7 +350,7 @@ void __attribute__((interrupt, auto_psv, section("usercode"))) _INT1Interrupt(vo
 	term_array[term_last_address] = (pb | pa); // store in array
 }
 
-void __attribute__((interrupt, auto_psv, section("usercode"))) _DMA0Interrupt(void)
+void __attribute__((interrupt, auto_psv, address(0x010500))) _DMA0Interrupt(void)
 {	
 	IFS0bits.DMA0IF = 0; // clear flag
 };
@@ -499,8 +500,16 @@ void __attribute__((section("usercode"))) setup()
 
 void __attribute__((section("usercode"))) run()
 {
-	text_string(0, 24, "Term24\\");
-	text_string(10, 24, "ESC;H for Help\\");
+	//text_string(0, 24, "Term24\\");
+	//text_string(10, 24, "ESC;H for Help\\");
+
+	// replacement
+	text_character(0, 24, 'T');
+	text_character(1, 24, 'e');
+	text_character(2, 24, 'r');
+	text_character(3, 24, 'm');
+	text_character(4, 24, '2');
+	text_character(5, 24, '4'); 
 
 	term_parallel = 0;
 	term_last_channel = 0x000F;
@@ -528,14 +537,16 @@ void __attribute__((section("usercode"))) run()
 	term_cursor = 1840;
 	if (term_setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
 
-	CNPUB = 0x000C; // pull-up on RB3 and RB2
+	CNPUB = 0x0003; // pull-up on RB1 and RB0
 
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// read external switches for different input types
-	int option = ((((PORTB & 0x000C) >> 2) ^ 0x0003) & 0x0003);
+	int option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
 
 	CNPUB = 0x0000; // turn off pull-ups on RB3 and RB2
+
+	option = 0; // TEMPORARY!
 
 	if (option == 0) // UART
 	{
@@ -578,7 +589,7 @@ void __attribute__((section("usercode"))) run()
 		U1TXREG = '\r'; // dummy transfers
 		U1TXREG = '\n';
 
-		text_string(30, 24, "UART: 9600-8-N-1\\");
+		//text_string(30, 24, "UART: 9600-8-N-1\\");
 	}
 	else if (option == 1) // PS/2
 	{
@@ -621,7 +632,7 @@ void __attribute__((section("usercode"))) run()
 		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 		U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
 
-		text_string(30, 24, "PS/2: Press = to sync\\");
+		//text_string(30, 24, "PS/2: Press = to sync\\");
 	}
 	else if (option == 2) // SPI
 	{
@@ -657,7 +668,7 @@ void __attribute__((section("usercode"))) run()
 		IEC0bits.DMA0IE = 1;
 		DMA0CONbits.CHEN = 1;
 
-		text_string(30, 24, "SPI\\");
+		//text_string(30, 24, "SPI\\");
 	}
 	else if (option == 3) // PARALLEL
 	{
@@ -679,7 +690,7 @@ void __attribute__((section("usercode"))) run()
 
 		term_parallel = 1;
 
-		text_string(30, 24, "PARALLEL\\");
+		//text_string(30, 24, "PARALLEL\\");
 	}
 
 	while (1)
@@ -1530,29 +1541,29 @@ void __attribute__((section("usercode"))) run()
 			{
 				if (term_sequence == 2 && term_keycode[2] == 'H')
 				{
-					text_string(0, 0,  "ANSI Commands:\\");
-					text_string(0, 1,  "  ESC[xA      = Cursor Up\\");
-					text_string(0, 2,  "  ESC[xB      = Cursor Down\\");
-					text_string(0, 3,  "  ESC[xC      = Cursor Forward\\");
-					text_string(0, 4,  "  ESC[xD      = Cursor Back\\");
-					text_string(0, 5,  "  ESC[xE      = Cursor Next Line\\");
-					text_string(0, 6,  "  ESC[xF      = Cursor Previous Line\\");
-					text_string(0, 7,  "  ESC[xG      = Cursor Horizontal Absolute\\");
-					text_string(0, 8,  "  ESC[y;xH    = Cursor Position\\");
-					text_string(0, 9,  "  ESC[xJ      = Erase in Display\\");
-					text_string(0, 10, "  ESC[xK      = Erase in Line\\");
-					text_string(0, 11, "  ESC[xS      = Scroll Up\\");
-					text_string(0, 12, "  ESC[xT      = Scroll Down\\");
-					text_string(0, 13, "Special Commands:\\");
-					text_string(0, 14, "  ESC;H       = Help Menu\\");
-					text_string(0, 15, "  ESC;T       = Terminal Mode\\");
-					text_string(0, 16, "  ESC;C       = Color Mode\\");
-					text_string(0, 17, "  ESC;Axx     = Set Memory Start Address\\");
-					text_string(0, 18, "  ESC;Dxx...  = Set Memory Data Length followed by Data\\");
-					text_string(0, 19, "Memory Addresses:\\");
-					text_string(0, 20, "  $4000-$47FF = Terminal Data\\");
-					text_string(0, 21, "  $4800-$4FFF = Terminal Mappings\\");
-					text_string(0, 22, "  $5000-$DFFF = Color Data\\");
+					//text_string(0, 0,  "ANSI Commands:\\");
+					//text_string(0, 1,  "  ESC[xA      = Cursor Up\\");
+					//text_string(0, 2,  "  ESC[xB      = Cursor Down\\");
+					//text_string(0, 3,  "  ESC[xC      = Cursor Forward\\");
+					//text_string(0, 4,  "  ESC[xD      = Cursor Back\\");
+					//text_string(0, 5,  "  ESC[xE      = Cursor Next Line\\");
+					//text_string(0, 6,  "  ESC[xF      = Cursor Previous Line\\");
+					//text_string(0, 7,  "  ESC[xG      = Cursor Horizontal Absolute\\");
+					//text_string(0, 8,  "  ESC[y;xH    = Cursor Position\\");
+					//text_string(0, 9,  "  ESC[xJ      = Erase in Display\\");
+					//text_string(0, 10, "  ESC[xK      = Erase in Line\\");
+					//text_string(0, 11, "  ESC[xS      = Scroll Up\\");
+					//text_string(0, 12, "  ESC[xT      = Scroll Down\\");
+					//text_string(0, 13, "Special Commands:\\");
+					//text_string(0, 14, "  ESC;H       = Help Menu\\");
+					//text_string(0, 15, "  ESC;T       = Terminal Mode\\");
+					//text_string(0, 16, "  ESC;C       = Color Mode\\");
+					//text_string(0, 17, "  ESC;Axx     = Set Memory Start Address\\");
+					//text_string(0, 18, "  ESC;Dxx...  = Set Memory Data Length followed by Data\\");
+					//text_string(0, 19, "Memory Addresses:\\");
+					//text_string(0, 20, "  $4000-$47FF = Terminal Data\\");
+					//text_string(0, 21, "  $4800-$4FFF = Terminal Mappings\\");
+					//text_string(0, 22, "  $5000-$DFFF = Color Data\\");
 
 					term_cursor = 1840;
 
@@ -1680,7 +1691,15 @@ int __attribute__((address(0x000200))) main()
 
 	CNPUB = 0x0000; // disable pull-up on RB4
 
-	// firmware update uses UART at 9600 baud, will rewrite all but main() essentially
+	// firmware update uses UART, will rewrite all but main() essentially
+	// [file.hex is the Intel HEX file from the dist/default/production folder]
+	// Commands: 
+	// chmod a+rw /dev/ttyUSB0
+	// stty -F /dev/ttyUSB0 9600
+	// #echo 'U' > /dev/ttyUSB0
+	// Wait, then:
+	// cat file.hex > /dev/ttyUSB0
+
 	if (update == 0x0000)
 	{
 		// output on RB6 (RP38)
@@ -1706,6 +1725,13 @@ int __attribute__((address(0x000200))) main()
 		//IEC0bits.U1TXIE = 1; // enable transmit interrupts
 		//IEC0bits.U1RXIE = 1; // enable receive interrupts
 
+		// delay and then detect baud rate
+		//for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
+		//U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
+		//while (U1MODEbits.ABAUD == 1) { } // wait for sync using 'U' character or 0x55 values
+
+		U1TXREG = 'E'; // dummy transfer
+
 		uint16_t save;
 
 		for (int i=1; i<=4; i++) // 0x010000 through 0x04FFFF
@@ -1724,7 +1750,7 @@ int __attribute__((address(0x000200))) main()
 			}
 		}
 
-		U1TXREG = '?'; // dummy transfer
+		U1TXREG = 'R'; // dummy transfer
 
 		unsigned char buffer;
 		unsigned int word;
@@ -1919,6 +1945,10 @@ int __attribute__((address(0x000200))) main()
 			}
 		}
 
+		U1TXREG = 'X'; // dummy transfer
+
+		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
+
 		// reset system
 		asm("RESET");
 	}
@@ -1927,3 +1957,34 @@ int __attribute__((address(0x000200))) main()
 
 	return 1;
 }
+
+
+/*
+	// below used for debugging
+	// output on RB6 (RP38)
+	TRISB = 0xFFBF;
+	LATB = 0x0000;
+	// sets UART1 to appropriate pins
+	RPINR18 = 0x0025; // UART1-RX on RP37
+	RPOR2 = (RPOR2 & 0xFF00) | 0x0001; // UART1-TX on RP38
+	// set up UART1
+	IEC0bits.U1TXIE = 0; // disable transmit interrupts
+	IEC0bits.U1RXIE = 0; // disable receive interrupts
+	IFS0bits.U1TXIF = 0; // clear flag
+	IFS0bits.U1RXIF = 0; // clear flag
+	IPC2bits.U1RXIP = 0x01; // lowest interrupt priority 
+	IPC3bits.U1TXIP = 0x01; // lowest interrupt priority 
+	U1MODE = 0x0000; // disable and clear everything, 8-bit, no parity, 1 stop bit, etc.
+	U1STA = 0x0000; // clear all flags
+	U1BRG = (65000000 / 9600) / 16 - 1; // baud rate divisor = (65000000 / 9600) / 16 - 1 = 422.177
+	U1MODEbits.UARTEN = 1; // enable uart module (needs to be on before UTXEN is enabled)
+	U1STAbits.UTXEN = 1; // enable transmit
+	//IEC0bits.U1TXIE = 1; // enable transmit interrupts
+	//IEC0bits.U1RXIE = 1; // enable receive interrupts
+	// test transfer
+	U1TXREG = '*'; // dummy transfer
+	// delay
+	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
+	// infinite loop
+	while (1) { }
+*/

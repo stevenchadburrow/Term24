@@ -67,7 +67,8 @@ MEMORY
   reset          : ORIGIN = 0x0,           LENGTH = 0x4
   ivt            : ORIGIN = 0x4,           LENGTH = 0x1FC
   firmware (xr)  : ORIGIN = 0x200,         LENGTH = 0xFE00  /* modified */
-  program (xr)   : ORIGIN = 0x10000,       LENGTH = 0x40000 /* modified */
+  fixed (xr)     : ORIGIN = 0x10000,       LENGTH = 0x800 /* modified */
+  program (xr)   : ORIGIN = 0x10800,       LENGTH = 0x3F800 /* modified */
   unused (xr)    : ORIGIN = 0x50000,       LENGTH = 0x57F0 /* modified */
   FICD           : ORIGIN = 0x557F0,       LENGTH = 0x2
   FPOR           : ORIGIN = 0x557F2,       LENGTH = 0x2
@@ -115,9 +116,9 @@ SECTIONS
   */
   .reset :
   {
-        SHORT(ABSOLUTE(__reset));
+        SHORT(ABSOLUTE(0x0200));
         SHORT(0x04);
-        SHORT((ABSOLUTE(__reset) >> 16) & 0x7F);
+        SHORT((ABSOLUTE(0x0200) >> 16) & 0x7F);
         SHORT(0);
   } >reset
 #endif

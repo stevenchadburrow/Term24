@@ -55,11 +55,19 @@ _TermScanline:
 	cpseq.w w2, w3
 	bra TermScanline_Color
 
+	; calculate top row of pixels
+	mov.w term_scanline, w0
+	mov.w #0x0320, w1
+	cpslt.w w0, w1
+	bra TermScanline_Next
+
 	; if not visible region, exit
 	mov.w term_scanline, w0
 	mov.w #0x0258, w1 ; 600 visible lines
 	cpslt.w w0, w1 ; skip if less than
 	bra TermScanline_Blank
+
+TermScanline_Next:
 
 	; last row (calculated) of each character is not visible, exit
 	mov.w term_counter, w0
@@ -86,6 +94,1032 @@ _TermScanline:
 	sl.b w0, w0
 	mov.b WREG, 0x0E13
 
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
+	sl.b w0, w0
+	mov.b WREG, 0x0E13
 
 TermScanline_Continue:
 	; only show black
@@ -150,6 +1184,240 @@ TermScanline_Half:
 	add.w w0, w4, w0
 	mov.b [w2+w0], [w3++]
 
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
+	mov.b [w1++], w0
+	and.w w0, w5, w0
+	sl.w w0, #0x0003, w0
+	add.w w0, w4, w0
+	mov.b [w2+w0], [w3++]
+
 
 	bra TermScanline_Calculate
 
@@ -160,7 +1428,94 @@ TermScanline_Copy:
 
 	; repeat 80 times
 	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
 
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
+	mov.w [w0++], [w1++]
 	
 TermScanline_Calculate:
 	; vertical extension
@@ -212,6 +1567,9 @@ TermScanline_Color:
 	cpslt.w w0, w1 ; skip if less than
 	bra TermScanline_Blank
 
+	; used below
+	mov.w #0x0000, w2
+
 	; increment location
 	mov.w term_counter, w0
 	mov.w term_location, w1
@@ -232,6 +1590,7 @@ TermScanline_Color:
 	bra TermScanline_Horizontal
 
 TermScanline_Layers:
+
 	; shift scanline distance
 	sl.w w1, #0x0007, w1 ; multiply by 128
 	mov.w #0x0001, w2 ; lsb only
@@ -261,6 +1620,895 @@ TermScanline_Layers:
 	mov.w #0x0000, w4 ; for comparisons
 
 	; repeat 128 times
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
+	mov.b [w1++], w0
+	mov.b [w2++], w3
+	cpsne.w w0, w4
+	mov.b w3, w0
+	mov.b WREG, 0x0E13
+	nop 
+
 	mov.b [w1++], w0
 	mov.b [w2++], w3
 	cpsne.w w0, w4
@@ -311,6 +2559,895 @@ TermScanline_Vertical:
 	nop
 	nop
 
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
+	mov.b [w1++], w0
+	mov.b WREG, 0x0E13
+	nop
+	nop
+	nop
+	nop
+
 	; black pixels
 	mov.w #0x0000, w0
 	mov.b WREG, 0x0E13
@@ -343,7 +3480,896 @@ TermScanline_Horizontal:
 	movpag #0x0001, DSRPAG
 	movpag #0x0001, DSWPAG 
 	
-	; repeat
+	; repeat 128 times
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
+	mov.b [w1+w2], w0
+	mov.b WREG, 0x0E13
+	inc.w w2, w2
+	and.w w2, w3, w2
+	nop
+	nop
+
 	mov.b [w1+w2], w0
 	mov.b WREG, 0x0E13
 	inc.w w2, w2
