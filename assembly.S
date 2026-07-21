@@ -11,6 +11,7 @@
 .equ term_orientation, 0x3AAA
 .equ term_cursor, 0x3AAC
 .equ term_mode, 0x3AAE
+.equ term_bottom, 0x3AB0
 
 .equ term_memory, 0x4000
 .equ term_map, 0x4800
@@ -1563,7 +1564,7 @@ TermScanline_Exit:
 TermScanline_Color:
 
 	; if not visible region, exit
-	mov.w #0x02FF, w1 ; 768 visible lines
+	mov.w term_bottom, w1 ; default of 0x02FF, 768 visible lines
 	cpslt.w w0, w1 ; skip if less than
 	bra TermScanline_Blank
 

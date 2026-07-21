@@ -1,7 +1,7 @@
 
 // Term24 - VGA Terminal Module using the PIC24.
 // Supports: UART, SPI, I2C, and PS/2 Keyboard.
-// Includes color mode for 128x128 resultion at 128-colors, with scrolling or layers.
+// Includes color mode for 128x128 resolution at 128-colors, with scrolling or layers.
 
 /*
 XGA Signal 1024 x 768 @ 60 Hz timing
@@ -72,6 +72,7 @@ Whole frame	806	16.6656
 #include <p24Exxxx.h>
 
 // unused memory here
+volatile unsigned char __attribute__((address(0x3800))) term_game_field[512]; // only uses 200 bytes plus borders
 volatile unsigned char __attribute__((address(0x3A00))) term_pixels[80];
 volatile unsigned char __attribute__((address(0x3A50))) term_buffer[80];
 volatile unsigned int __attribute__((address(0x3AA0))) term_scanline;
@@ -82,23 +83,39 @@ volatile unsigned int __attribute__((address(0x3AA8))) term_scroll;
 volatile unsigned int __attribute__((address(0x3AAA))) term_orientation;
 volatile unsigned int __attribute__((address(0x3AAC))) term_cursor; 
 volatile unsigned int __attribute__((address(0x3AAE))) term_mode; // 0 = terminal, 1 = color
-volatile unsigned int __attribute__((address(0x3AB0))) term_parallel;
-volatile unsigned int __attribute__((address(0x3AB2))) term_last_channel;
-volatile unsigned int __attribute__((address(0x3AB4))) term_last_address;
-volatile unsigned int __attribute__((address(0x3AB6))) term_ps2_release;
-volatile unsigned int __attribute__((address(0x3AB8))) term_ps2_extended;
-volatile unsigned int __attribute__((address(0x3ABA))) term_ps2_shift;
-volatile unsigned int __attribute__((address(0x3ABC))) term_ps2_capslock;
-volatile unsigned int __attribute__((address(0x3ABE))) term_ps2_synced;
-volatile unsigned int __attribute__((address(0x3AC0))) term_sequence;
-volatile unsigned int __attribute__((address(0x3AC2))) term_command;
-volatile unsigned int __attribute__((address(0x3AC4))) term_print;
-volatile unsigned int __attribute__((address(0x3AC6))) term_dma_address;
-volatile unsigned int __attribute__((address(0x3AC8))) term_dma_data; 
-volatile unsigned int __attribute__((address(0x3ACA))) term_position;
-volatile unsigned int __attribute__((address(0x3ACC))) term_setting_cursor;
-volatile unsigned int __attribute__((address(0x3ACE))) term_setting_echo;
-volatile unsigned char __attribute__((address(0x3AD0))) term_keycode[8];
+volatile unsigned int __attribute__((address(0x3AB0))) term_bottom; // only used in color mode, 0x02FF by default
+volatile unsigned int __attribute__((address(0x3AB2))) term_parallel;
+volatile unsigned int __attribute__((address(0x3AB4))) term_last_channel;
+volatile unsigned int __attribute__((address(0x3AB6))) term_last_address;
+volatile unsigned int __attribute__((address(0x3AB8))) term_ps2_release;
+volatile unsigned int __attribute__((address(0x3ABA))) term_ps2_extended;
+volatile unsigned int __attribute__((address(0x3ABC))) term_ps2_shift;
+volatile unsigned int __attribute__((address(0x3ABE))) term_ps2_capslock;
+volatile unsigned int __attribute__((address(0x3AC0))) term_ps2_synced;
+volatile unsigned int __attribute__((address(0x3AC2))) term_sequence;
+volatile unsigned int __attribute__((address(0x3AC4))) term_command;
+volatile unsigned int __attribute__((address(0x3AC6))) term_print;
+volatile unsigned int __attribute__((address(0x3AC8))) term_dma_address;
+volatile unsigned int __attribute__((address(0x3ACA))) term_dma_data; 
+volatile unsigned int __attribute__((address(0x3ACC))) term_position;
+volatile unsigned int __attribute__((address(0x3ACE))) term_setting_cursor;
+volatile unsigned int __attribute__((address(0x3AD0))) term_setting_echo;
+volatile unsigned char __attribute__((address(0x3AD2))) term_keycode[8];
+volatile unsigned int __attribute__((address(0x3ADA))) term_game_piece_current;
+volatile unsigned int __attribute__((address(0x3ADC))) term_game_piece_next;
+volatile signed int __attribute__((address(0x3ADE))) term_game_piece_x;
+volatile signed int __attribute__((address(0x3AE0))) term_game_piece_y;
+volatile signed int __attribute__((address(0x3AE2))) term_game_piece_rot;
+volatile unsigned int __attribute__((address(0x3AE4))) term_game_button_current;
+volatile unsigned int __attribute__((address(0x3AE6))) term_game_button_previous;
+volatile unsigned int __attribute__((address(0x3AE8))) term_game_button_held;
+volatile unsigned int __attribute__((address(0x3AEA))) term_game_delay_low;
+volatile unsigned int __attribute__((address(0x3AEC))) term_game_delay_high;
+volatile unsigned int __attribute__((address(0x3AEE))) term_game_counter_low;
+volatile unsigned int __attribute__((address(0x3AF0))) term_game_counter_high;
+volatile unsigned int __attribute__((address(0x3AF2))) term_game_points;
+volatile unsigned int __attribute__((address(0x3AF4))) term_game_tally;
+volatile unsigned int __attribute__((address(0x3AF6))) term_game_seed;
 // unused memory here
 volatile unsigned char __attribute__((address(0x3B00))) term_ps2_conversion[256];
 volatile unsigned int __attribute__((address(0x3C00))) term_array[256];
@@ -282,6 +299,84 @@ const __prog__ unsigned char __attribute__((space(prog), section("usercode"))) t
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 };
 
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_0[32] = {
+	"Term24    ESC;H for Help      \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_1[32] = {
+	"UART 9600-8-N-1               \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_2[48] = {
+	"PS/2 Press = or send 0x55 to sync ?\??\?-8-O-1  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_3[32] = {
+	"SPI CLK/MOSI                  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_4[32] = {
+	"PARALLEL CLK/PORT             \\" };
+
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[32] = {
+	"ANSI Commands:                \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[32] = {
+	" ESC[xA     = Cursor Up       \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[32] = {
+	" ESC[xB     = Cursor Down     \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[32] = {
+	" ESC[xC     = Cursor Forward  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[32] = {
+	" ESC[xD     = Cursor Back     \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[32] = {
+	" ESC[xE     = Cursor Next Line\\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[32] = {
+	" ESC[xF     = Cursor Prev Line\\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[32] = {
+	" ESC[xG     = Cursor Horz Abs \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[32] = {
+	" ESC[y;xH   = Cursor Position \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[32] = {
+	" ESC[xJ     = Erase in Display\\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[32] = {
+	" ESC[xK     = Erase in Line   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_11[32] = {
+	" ESC[xS     = Scroll Up       \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[32] = {
+	" ESC[xT     = Scroll Down     \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[32] = {
+	"Special Commands:             \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[32] = {
+	" ESC;H      = Help Menu       \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
+	" ESC;T      = Terminal Mode   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
+	" ESC;C      = Color Mode      \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
+	" ESC;Axx    = Memory Address  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_18[48] = {
+	" ESC;Dxx... = Data Length followed by Values  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_19[32] = {
+	"Memory Addresses:             \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_20[32] = {
+	" $4000-47FF = Terminal Data   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_21[32] = {
+	" $4800-4FFF = Terminal Mapping\\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_22[32] = {
+	" $5000-DFFF = Color Data      \\" };
+
+
+void __attribute__((section("usercode"))) color_character(int x, int y, unsigned char c)
+{
+	if (c < 0x20 || c >= 0x80) return;
+
+	unsigned char v;
+
+	for (int i=0; i<8; i++)
+	{
+		v = text_map[(c - 0x20) * 8 + i];
+
+		for (int j=0; j<6; j++)
+		{
+			if ((v & 0x80) == 0x80) term_color[(y+i)*128+(x+j)] = 0x7F;
+			else term_color[(y+i)*128+(x+j)] = 0x00;
+
+			v <<= 1;
+		}
+	}
+};
 
 void __attribute__((section("usercode"))) text_character(int x, int y, unsigned char c)
 {
@@ -353,6 +448,820 @@ void __attribute__((interrupt, auto_psv, address(0x010400))) _INT1Interrupt(void
 void __attribute__((interrupt, auto_psv, address(0x010500))) _DMA0Interrupt(void)
 {	
 	IFS0bits.DMA0IF = 0; // clear flag
+};
+
+const __prog__ char __attribute__((space(prog), section("usercode"))) game_pieces[4*4*4*7] = {
+	// I
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+
+	' ',' ',' ',' ',
+	'0','0','0','0',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+
+	' ',' ',' ',' ',
+	'0','0','0','0',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	// J
+	' ',' ','0',' ',
+	' ',' ','0',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	'0','0','0',' ',
+	' ',' ','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	' ','0','0',' ',
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+
+	' ',' ',' ',' ',
+	' ','0',' ',' ',
+	' ','0','0','0',
+	' ',' ',' ',' ',
+
+	// L
+	' ','0',' ',' ',
+	' ','0',' ',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	' ',' ','0',' ',
+	'0','0','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	' ','0','0',' ',
+	' ',' ','0',' ',
+	' ',' ','0',' ',
+
+	' ',' ',' ',' ',
+	' ','0','0','0',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+
+	// O
+	' ','0','0',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0','0',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0','0',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0','0',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	// S
+	' ',' ',' ',' ',
+	' ','0','0',' ',
+	'0','0',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0',' ',' ',
+	' ','0','0',' ',
+	' ',' ','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	' ','0','0',' ',
+	'0','0',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0',' ',' ',
+	' ','0','0',' ',
+	' ',' ','0',' ',
+	' ',' ',' ',' ',
+
+	// Z
+	' ',' ',' ',' ',
+	'0','0',' ',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ','0',' ',
+	' ','0','0',' ',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	'0','0',' ',' ',
+	' ','0','0',' ',
+	' ',' ',' ',' ',
+
+	' ',' ','0',' ',
+	' ','0','0',' ',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+
+	// T
+	' ','0',' ',' ',
+	'0','0','0',' ',
+	' ',' ',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0',' ',' ',
+	'0','0',' ',' ',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+
+	' ',' ',' ',' ',
+	'0','0','0',' ',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+
+	' ','0',' ',' ',
+	' ','0','0',' ',
+	' ','0',' ',' ',
+	' ',' ',' ',' ',
+};
+
+const __prog__ char __attribute__((space(prog), section("usercode"))) game_bags[7*16] = {
+	0, 1, 2, 3, 4, 5, 6,
+	6, 4, 3, 5, 0, 1, 2,
+	3, 4, 1, 0, 6, 5, 2,
+	1, 0, 6, 3, 4, 2, 5,
+
+	5, 2, 1, 3, 4, 0, 6,
+	0, 2, 1, 6, 3, 5, 4,
+	5, 4, 6, 0, 3, 1, 2,
+	4, 5, 2, 6, 1, 0, 3,
+
+	4, 2, 0, 1, 6, 3, 5,
+	3, 0, 6, 2, 1, 4, 5,
+	1, 0, 3, 4, 5, 6, 2,
+	2, 0, 4, 5, 1, 6, 3,
+
+	6, 4, 0, 5, 2, 1, 3,
+	1, 2, 4, 5, 6, 3, 0,
+	6, 2, 1, 3, 0, 5, 4,
+	4, 1, 2, 3, 0, 6, 5,
+};
+
+void __attribute__((section("usercode"))) play()
+{
+	term_game_seed = 0;
+
+	if (term_mode == 0)
+	{
+		// turn off colors
+		TRISB = (TRISB & 0x00FF) | 0x7F00;
+		PORTB = 0x0000;
+
+		term_bottom = 600-1; // usually 768-1 by default
+
+		for (int i=0; i<2048; i++) term_memory[i] = ' ';
+	}
+	else if (term_mode == 1)
+	{
+		// turn on colors
+		TRISB = (TRISB & 0x00FF) | 0x8000;
+		PORTB = 0x0000;
+
+		term_orientation = 2; // layered
+		term_scroll = 0; // no scrolling
+		term_bottom = 576-1; // usually 768-1 by default
+
+		for (int i=0; i<12288; i++)
+		{
+			term_color[i] = 0x00;
+		}
+
+		for (int i=0; i<20480; i++)
+		{
+			term_color_eds[i] = 0x00;
+		}
+	}
+
+	for (int y=0; y<24; y++)
+	{
+		for (int x=0; x<16; x++)
+		{
+			if (y == 0 || y > 20) term_game_field[y*16+x] = '*';
+			else
+			{
+				if (x < 3 || x > 12) term_game_field[y*16+x] = '*';
+				else term_game_field[y*16+x] = ' ';
+			}
+		}
+	}
+
+	term_game_piece_current = 0; // randomize
+	term_game_piece_next = 1; // randomize
+	term_game_piece_x = 6; // starts at 6
+	term_game_piece_y = 1; // starts at 1
+	term_game_piece_rot = 0;
+	term_game_button_current = 0x003F;
+	term_game_button_previous = 0x003F;
+	term_game_button_held = 60;
+	term_game_delay_low = 60;
+	term_game_delay_high = 0;
+	term_game_counter_low = term_game_delay_low;
+	term_game_counter_high = term_game_delay_high;
+	term_game_points = 0;
+	term_game_tally = 0;
+
+	unsigned char bag[7];
+	unsigned char pos = 2; // must start with 2
+	unsigned int loc = 0;
+	unsigned int redraw = 1; // must start with 1
+	unsigned int descend = 0;
+	unsigned int check = 0;
+	unsigned int first = 0;
+	unsigned int lines = 0;
+	signed int prev_x = 6;
+	signed int prev_y = 1;
+	signed int prev_rot = 0;
+	unsigned char color_value = 0x7F;
+	unsigned int hold_time = 5; // adjust accordingly
+	unsigned int text_shift = 25; // adjust accordingly
+	unsigned int color_shift = 15; // adjust accordingly
+	unsigned int color_scale = 3; // adjust accordingly
+
+	term_game_button_held = hold_time;
+
+	for (int i=0; i<7; i++) bag[i] = (unsigned char)(i);
+
+	if (term_mode == 0)
+	{
+		text_character(18+text_shift, 1, 'P');
+		text_character(19+text_shift, 1, 'T');
+		text_character(20+text_shift, 1, 'S');
+		text_character(21+text_shift, 1, ':');
+		text_character(22+text_shift, 1, ' ');
+		text_character(23+text_shift, 1, '0');
+		text_character(24+text_shift, 1, '0');
+		text_character(25+text_shift, 1, '0');
+		text_character(26+text_shift, 1, '0');
+
+		text_character(18+text_shift, 3, 'N');
+		text_character(19+text_shift, 3, 'E');
+		text_character(20+text_shift, 3, 'X');
+		text_character(21+text_shift, 3, 'T');
+		text_character(22+text_shift, 3, ':');
+		text_character(23+text_shift, 3, ' ');
+
+		switch (term_game_piece_next)
+		{
+			case 0: { text_character(24+text_shift, 3, 'I'); break; }
+			case 1: { text_character(24+text_shift, 3, 'J'); break; }
+			case 2: { text_character(24+text_shift, 3, 'L'); break; }
+			case 3: { text_character(24+text_shift, 3, 'O'); break; }
+			case 4: { text_character(24+text_shift, 3, 'S'); break; }
+			case 5: { text_character(24+text_shift, 3, 'Z'); break; }
+			case 6: { text_character(24+text_shift, 3, 'T'); break; }
+			case 7: { text_character(24+text_shift, 3, '?'); break; }
+			default: { text_character(24+text_shift, 3, '?'); break; }
+		}
+	}
+	else if (term_mode == 1)
+	{
+		color_character(56+color_shift, 1, 'P');
+		color_character(62+color_shift, 1, 'T');
+		color_character(68+color_shift, 1, 'S');
+		color_character(74+color_shift, 1, ':');
+		color_character(80+color_shift, 1, ' ');
+		color_character(86+color_shift, 1, '0');
+		color_character(92+color_shift, 1, '0');
+		color_character(98+color_shift, 1, '0');
+		color_character(104+color_shift, 1, '0');
+
+		color_character(56+color_shift, 9, 'N');
+		color_character(62+color_shift, 9, 'E');
+		color_character(68+color_shift, 9, 'X');
+		color_character(74+color_shift, 9, 'T');
+		color_character(80+color_shift, 9, ':');
+		color_character(86+color_shift, 9, ' ');
+
+		switch (term_game_piece_next)
+		{
+			case 0: { color_character(92+color_shift, 9, 'I'); break; }
+			case 1: { color_character(92+color_shift, 9, 'J'); break; }
+			case 2: { color_character(92+color_shift, 9, 'L'); break; }
+			case 3: { color_character(92+color_shift, 9, 'O'); break; }
+			case 4: { color_character(92+color_shift, 9, 'S'); break; }
+			case 5: { color_character(92+color_shift, 9, 'Z'); break; }
+			case 6: { color_character(92+color_shift, 9, 'T'); break; }
+			case 7: { color_character(92+color_shift, 9, '?'); break; }
+			default: { color_character(92+color_shift, 9, '?'); break; }
+		}
+	}
+
+	while (1)
+	{
+		term_game_seed++; // psuedo-random
+
+		prev_x = term_game_piece_x;
+		prev_y = term_game_piece_y;
+		prev_rot = term_game_piece_rot;
+
+		if (term_game_counter_low > 0)
+		{
+			term_game_counter_low--;
+		}
+		else
+		{
+			if (term_game_counter_high > 0)
+			{
+				term_game_counter_low = 65535;
+				term_game_counter_high--;
+			}
+			else
+			{
+				term_game_counter_low = term_game_delay_low;
+				term_game_counter_high = term_game_delay_high;
+
+				if (term_game_piece_y < 21)
+				{
+					term_game_piece_y++;
+				}
+
+				descend = 1;
+				check = 1;
+				redraw = 1;
+			}
+		}	
+
+		if (descend == 0)
+		{
+			term_game_button_previous = term_game_button_current;
+
+			term_game_button_current = ((PORTB & 0x000C) << 2) | (PORTA & 0x000F);
+
+			if (term_game_button_current == 0x003F)
+			{
+				term_game_button_held = hold_time;
+			}
+
+			if (term_game_button_held > 0) term_game_button_held--;
+
+			if (term_game_button_current != term_game_button_previous || term_game_button_held == 0)
+			{
+				term_game_seed++; // psuedo-random
+
+				if ((term_game_button_current & 0x0004) == 0x0000 &&
+					((term_game_button_previous & 0x0004) == 0x0004 || term_game_button_held == 0)) // down
+				{
+					if (term_game_piece_y < 21)
+					{
+						term_game_piece_y++;
+					}	
+
+					term_game_counter_low = term_game_delay_low;
+					term_game_counter_high = term_game_delay_high;		
+
+					descend = 1;
+					check = 1;
+				}
+
+				if (descend == 0)
+				{
+					if ((term_game_button_current & 0x0001) == 0x0000 &&
+						((term_game_button_previous & 0x0001) == 0x0001 || term_game_button_held == 0)) // right
+					{
+						if (term_game_piece_x < 14)
+						{
+							term_game_piece_x++;
+						}
+
+						check = 1;
+					}
+
+					if ((term_game_button_current & 0x0002) == 0x0000 &&
+						((term_game_button_previous & 0x0002) == 0x0002 || term_game_button_held == 0)) // left
+					{
+						if (term_game_piece_x > 0)
+						{
+							term_game_piece_x--;
+						}
+
+						check = 1;
+					}
+
+					if ((term_game_button_current & 0x0010) == 0x0000 &&
+						((term_game_button_previous & 0x0010) == 0x0010)) // B
+					{
+						if (term_game_piece_rot == 3)
+						{
+							term_game_piece_rot = 0;
+						}
+						else
+						{
+							term_game_piece_rot++;
+						}				
+
+						check = 1;
+					}
+
+					if ((term_game_button_current & 0x0020) == 0x0000 &&
+						((term_game_button_previous & 0x0020) == 0x0020)) // A
+					{
+						if (term_game_piece_rot == 0)
+						{
+							term_game_piece_rot = 3;
+						}
+						else
+						{
+							term_game_piece_rot--;
+						}				
+
+						check = 1;
+					}
+				}
+
+				redraw = 1;
+			}
+
+			if (term_game_button_held == 0) term_game_button_held = hold_time;
+		}
+
+		if (check > 0) // check for collision
+		{
+			check = 0;
+
+			for (int y=0; y<4; y++)
+			{
+				for (int x=0; x<4; x++)
+				{
+					loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
+
+					if (game_pieces[loc] != ' ')
+					{
+						if (term_game_field[(term_game_piece_y+y)*16+(term_game_piece_x+x)] != ' ')
+						{
+							check = 1;
+						}
+					}
+				}
+			}
+
+			if (check == 1) // collision detected
+			{
+				term_game_piece_x = prev_x;
+				term_game_piece_y = prev_y;
+				term_game_piece_rot = prev_rot;
+
+				if (first > 0) // game over
+				{
+					if (term_mode == 0)
+					{
+						text_character(18+text_shift, 5, 'G');
+						text_character(19+text_shift, 5, 'A');
+						text_character(20+text_shift, 5, 'M');
+						text_character(21+text_shift, 5, 'E');
+						text_character(22+text_shift, 5, ' ');
+						text_character(23+text_shift, 5, 'O');
+						text_character(24+text_shift, 5, 'V');
+						text_character(25+text_shift, 5, 'E');
+						text_character(26+text_shift, 5, 'R');
+					}
+					else if (term_mode == 1)
+					{
+						color_character(56+color_shift, 17, 'G');
+						color_character(62+color_shift, 17, 'A');
+						color_character(68+color_shift, 17, 'M');
+						color_character(74+color_shift, 17, 'E');
+						color_character(80+color_shift, 17, ' ');
+						color_character(86+color_shift, 17, 'O');
+						color_character(92+color_shift, 17, 'V');
+						color_character(98+color_shift, 17, 'E');
+						color_character(104+color_shift, 17, 'R');
+					}
+		
+					while (1) { }
+				}
+			}
+
+			first = 0;
+			
+			if (descend > 0) // now add to field
+			{
+				if (check == 1)
+				{
+					for (int y=0; y<4; y++)
+					{
+						for (int x=0; x<4; x++)
+						{
+							loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
+
+							if (game_pieces[loc] != ' ')
+							{
+								term_game_field[(term_game_piece_y+y)*16+(term_game_piece_x+x)] = '#';
+							}
+						}
+					}
+
+					lines = 0;
+
+					// check for lines here
+					for (int y=20; y>=2; y--)
+					{
+						check = 1;
+
+						for (int x=0; x<19; x++)
+						{
+							if (term_game_field[y*16+x] == ' ') check = 0;
+						}
+
+						if (check == 1) // remove line
+						{
+							term_game_seed++; // psuedo-random
+
+							for (int i=y; i>=2; i--)
+							{
+								for (int x=0; x<19; x++)
+								{
+									term_game_field[i*16+x] = term_game_field[(i-1)*16+x];
+								}
+							}
+
+							y++; // check line again
+
+							lines++;
+						}
+					}
+
+					if (lines == 0) term_game_points += 1;
+					else if (lines == 1) term_game_points += 10;
+					else if (lines == 2) term_game_points += 20;
+					else if (lines == 3) term_game_points += 50;
+					else if (lines == 4) term_game_points += 100;
+
+					term_game_tally += 1;
+
+					// new speed setting
+					if (term_game_tally < 20)
+					{
+						term_game_delay_low = 60;
+						term_game_delay_high = 0;
+					}
+					else if (term_game_tally < 40)
+					{
+						term_game_delay_low = 50;
+						term_game_delay_high = 0;
+					}
+					else if (term_game_tally < 60)
+					{
+						term_game_delay_low = 40;
+						term_game_delay_high = 0;
+					}
+					else if (term_game_tally < 80)
+					{
+						term_game_delay_low = 30;
+						term_game_delay_high = 0;
+					}
+					else if (term_game_tally < 100)
+					{
+						term_game_delay_low = 20;
+						term_game_delay_high = 0;
+					}
+					else
+					{
+						term_game_delay_low = 10;
+						term_game_delay_high = 0;
+					}			
+
+					// new piece here
+					term_game_piece_x = 6;
+					term_game_piece_y = 1;
+					term_game_piece_rot = 0;
+					term_game_piece_current = term_game_piece_next;
+
+					// random bag
+					term_game_piece_next = bag[pos];
+					pos++;
+					if (pos >= 7)
+					{
+						pos = 0;
+
+						for (int i=0; i<7; i++) bag[i] = game_bags[(term_game_seed & 0x0F)*7+i];
+					}
+
+					term_game_piece_next++;
+					if (term_game_piece_next >= 7) term_game_piece_next = 0;
+
+					first = 1;
+
+					if (term_mode == 0)
+					{
+						text_character(18+text_shift, 1, 'P');
+						text_character(19+text_shift, 1, 'T');
+						text_character(20+text_shift, 1, 'S');
+						text_character(21+text_shift, 1, ':');
+						text_character(22+text_shift, 1, ' ');
+
+						text_character(23+text_shift, 1, (unsigned int)((term_game_points % 10000) / 1000) + '0');
+						text_character(24+text_shift, 1, (unsigned int)((term_game_points % 1000) / 100) + '0');
+						text_character(25+text_shift, 1, (unsigned int)((term_game_points % 100) / 10) + '0');
+						text_character(26+text_shift, 1, (unsigned int)((term_game_points % 10) / 1) + '0');
+
+						text_character(18+text_shift, 3, 'N');
+						text_character(19+text_shift, 3, 'E');
+						text_character(20+text_shift, 3, 'X');
+						text_character(21+text_shift, 3, 'T');
+						text_character(22+text_shift, 3, ':');
+						text_character(23+text_shift, 3, ' ');
+
+						switch (term_game_piece_next)
+						{
+							case 0: { text_character(24+text_shift, 3, 'I'); break; }
+							case 1: { text_character(24+text_shift, 3, 'J'); break; }
+							case 2: { text_character(24+text_shift, 3, 'L'); break; }
+							case 3: { text_character(24+text_shift, 3, 'O'); break; }
+							case 4: { text_character(24+text_shift, 3, 'S'); break; }
+							case 5: { text_character(24+text_shift, 3, 'Z'); break; }
+							case 6: { text_character(24+text_shift, 3, 'T'); break; }
+							case 7: { text_character(24+text_shift, 3, '?'); break; }
+							default: { text_character(24+text_shift, 3, '?'); break; }
+						}
+					}
+					else if (term_mode == 1)
+					{
+						color_character(56+color_shift, 1, 'P');
+						color_character(62+color_shift, 1, 'T');
+						color_character(68+color_shift, 1, 'S');
+						color_character(74+color_shift, 1, ':');
+						color_character(80+color_shift, 1, ' ');
+
+						color_character(86+color_shift, 1, (unsigned int)((term_game_points % 10000) / 1000) + '0');
+						color_character(92+color_shift, 1, (unsigned int)((term_game_points % 1000) / 100) + '0');
+						color_character(98+color_shift, 1, (unsigned int)((term_game_points % 100) / 10) + '0');
+						color_character(104+color_shift, 1, (unsigned int)((term_game_points % 10) / 1) + '0');
+
+						color_character(56+color_shift, 9, 'N');
+						color_character(62+color_shift, 9, 'E');
+						color_character(68+color_shift, 9, 'X');
+						color_character(74+color_shift, 9, 'T');
+						color_character(80+color_shift, 9, ':');
+						color_character(86+color_shift, 9, ' ');
+
+						switch (term_game_piece_next)
+						{
+							case 0: { color_character(92+color_shift, 9, 'I'); break; }
+							case 1: { color_character(92+color_shift, 9, 'J'); break; }
+							case 2: { color_character(92+color_shift, 9, 'L'); break; }
+							case 3: { color_character(92+color_shift, 9, 'O'); break; }
+							case 4: { color_character(92+color_shift, 9, 'S'); break; }
+							case 5: { color_character(92+color_shift, 9, 'Z'); break; }
+							case 6: { color_character(92+color_shift, 9, 'T'); break; }
+							case 7: { color_character(92+color_shift, 9, '?'); break; }
+							default: { color_character(92+color_shift, 9, '?'); break; }
+						}
+					}
+				}
+
+				descend = 0;
+			}
+
+			check = 0;
+		}
+
+		if (redraw > 0) // redraw screen
+		{
+			if (term_mode == 0)
+			{
+				for (int y=0; y<24; y++)
+				{
+					for (int x=0; x<16; x++)
+					{
+						term_memory[y*80+x+text_shift] = term_game_field[y*16+x];
+					}
+				}
+
+				for (int y=0; y<4; y++)
+				{
+					for (int x=0; x<4; x++)
+					{
+						loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
+
+						if (game_pieces[loc] != ' ') term_memory[(y+term_game_piece_y)*80+(x+term_game_piece_x)+text_shift] = game_pieces[loc];
+					}
+				}
+			}
+			else if (term_mode == 1)
+			{
+				for (int y=0; y<24; y++)
+				{
+					for (int x=0; x<16; x++)
+					{
+						if (term_game_field[y*16+x] == ' ')
+						{
+							for (int i=0; i<color_scale; i++)
+							{
+								for (int j=0; j<color_scale; j++)
+								{
+									term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x00;
+								}
+							}
+						}
+						else if (term_game_field[y*16+x] == '#')
+						{
+							for (int i=0; i<color_scale; i++)
+							{
+								for (int j=0; j<color_scale; j++)
+								{
+									if (i == 0 || j == 0)
+									{
+										term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x15;
+									}
+									else
+									{
+										term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x2A;
+									}
+								}
+							}
+						}
+						else
+						{
+							for (int i=0; i<color_scale; i++)
+							{
+								for (int j=0; j<color_scale; j++)
+								{
+									term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x7F;
+								}
+							}
+						}
+					}
+				}
+
+				switch (term_game_piece_current)
+				{
+					case 0: { color_value = 0x4F; break; } // I = cyan
+					case 1: { color_value = 0x43; break; } // J = blue
+					case 2: { color_value = 0x6A; break; } // L = light grey
+					case 3: { color_value = 0x7C; break; } // O = yellow
+					case 4: { color_value = 0x4C; break; } // S = green
+					case 5: { color_value = 0x70; break; } // Z = red
+					case 6: { color_value = 0x73; break; } // T = magenta
+					case 7: { color_value = 0x7F; break; } 
+					default: { color_value = 0x7F; break; }
+				}
+
+				for (int y=0; y<24*color_scale; y++)
+				{
+					for (int x=0; x<16*color_scale; x++)
+					{
+						term_color_eds[y*128+x+color_shift+4096] = 0x00;
+					}
+				}
+
+				for (int y=0; y<4; y++)
+				{
+					for (int x=0; x<4; x++)
+					{
+						loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
+
+						if (game_pieces[loc] != ' ')
+						{
+							for (int i=0; i<color_scale; i++)
+							{
+								for (int j=0; j<color_scale; j++)
+								{
+									if (i == 0 || j == 0)
+									{
+										term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = (color_value & 0x3F);
+									}
+									else
+									{
+										term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = color_value;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			redraw = 0;
+		}
+
+		while (term_scanline > 0) { }
+
+		while (term_scanline <= term_bottom) { }
+	}
 };
 
 void __attribute__((section("usercode"))) setup()
@@ -481,6 +1390,7 @@ void __attribute__((section("usercode"))) setup()
 	term_cursor = 0;
 	term_position = 0;
 	term_mode = 0;
+	term_bottom = 768-1; // default
 
 	asm("mov.w #0x8000, w1"); // bit 15
 	asm("mov.w 0x0110, w0");
@@ -500,16 +1410,9 @@ void __attribute__((section("usercode"))) setup()
 
 void __attribute__((section("usercode"))) run()
 {
-	//text_string(0, 24, "Term24\\");
-	//text_string(10, 24, "ESC;H for Help\\");
+	int option = 0;
 
-	// replacement
-	text_character(0, 24, 'T');
-	text_character(1, 24, 'e');
-	text_character(2, 24, 'r');
-	text_character(3, 24, 'm');
-	text_character(4, 24, '2');
-	text_character(5, 24, '4'); 
+	text_string(0, 24, text_menu_0);
 
 	term_parallel = 0;
 	term_last_channel = 0x000F;
@@ -537,16 +1440,18 @@ void __attribute__((section("usercode"))) run()
 	term_cursor = 1840;
 	if (term_setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
 
-	CNPUB = 0x0003; // pull-up on RB1 and RB0
+	CNPUB = 0x000F; // pull-up on RB3 to RB0
 
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// read external switches for different input types
-	int option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
+	option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
 
-	CNPUB = 0x0000; // turn off pull-ups on RB3 and RB2
+	// game over-ride
+	if ((PORTB & 0x0004) == 0x0000) option = 4; // text mode
+	if ((PORTB & 0x0008) == 0x0000) option = 5; // color mode
 
-	option = 0; // TEMPORARY!
+	CNPUB = 0x0000; // turn off pull-ups on RB1 and RB0
 
 	if (option == 0) // UART
 	{
@@ -554,6 +1459,8 @@ void __attribute__((section("usercode"))) run()
 		LATA = 0x0000;
 		TRISB = 0x7F3F;
 		LATB = 0x0000;
+
+		CNPUB = 0x0060; // pull-up on RB6 and RB5
 
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
@@ -589,7 +1496,7 @@ void __attribute__((section("usercode"))) run()
 		U1TXREG = '\r'; // dummy transfers
 		U1TXREG = '\n';
 
-		//text_string(30, 24, "UART: 9600-8-N-1\\");
+		text_string(32, 24, text_menu_1);
 	}
 	else if (option == 1) // PS/2
 	{
@@ -597,6 +1504,8 @@ void __attribute__((section("usercode"))) run()
 		LATA = 0x0000;
 		TRISB = 0x7F7F;
 		LATB = 0x0000;
+
+		CNPUB = 0x0060; // pull-up on RB6 and RB5
 
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
@@ -632,7 +1541,7 @@ void __attribute__((section("usercode"))) run()
 		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 		U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
 
-		//text_string(30, 24, "PS/2: Press = to sync\\");
+		text_string(32, 24, text_menu_2);
 	}
 	else if (option == 2) // SPI
 	{
@@ -668,7 +1577,7 @@ void __attribute__((section("usercode"))) run()
 		IEC0bits.DMA0IE = 1;
 		DMA0CONbits.CHEN = 1;
 
-		//text_string(30, 24, "SPI\\");
+		text_string(32, 24, text_menu_3);
 	}
 	else if (option == 3) // PARALLEL
 	{
@@ -676,10 +1585,10 @@ void __attribute__((section("usercode"))) run()
 		LATA = 0x0000;
 		TRISB = 0x7F7F;
 		LATB = 0x0000;
-
+			
 		// sets INT1 to appropriate pins
 		RPINR0 = 0x2600; // INT1 on RP38
-		
+			
 		// set up INT1
 		IFS1bits.INT1IF = 0; // clear flag
 		IEC1bits.INT1IE = 0; // disable interrupts
@@ -690,7 +1599,24 @@ void __attribute__((section("usercode"))) run()
 
 		term_parallel = 1;
 
-		//text_string(30, 24, "PARALLEL\\");
+		text_string(32, 24, text_menu_4);
+	}
+	else if (option == 4 || option == 5) // GAME
+	{
+		TRISA = 0x000F;
+		LATA = 0x0000;
+		TRISB = 0x7F7F;
+		LATB = 0x0000;
+
+		CNPUA = 0x000F; // pull-up on RA3 to RA0
+		CNPUB = 0x000C; // pull-ups on RB3 and RB2
+		
+		if (option == 4) term_mode = 0; // text mode
+		else if (option == 5) term_mode = 1; // color mode
+
+		play(); // play game
+
+		while (1) { } // infinite loop
 	}
 
 	while (1)
@@ -1541,29 +2467,29 @@ void __attribute__((section("usercode"))) run()
 			{
 				if (term_sequence == 2 && term_keycode[2] == 'H')
 				{
-					//text_string(0, 0,  "ANSI Commands:\\");
-					//text_string(0, 1,  "  ESC[xA      = Cursor Up\\");
-					//text_string(0, 2,  "  ESC[xB      = Cursor Down\\");
-					//text_string(0, 3,  "  ESC[xC      = Cursor Forward\\");
-					//text_string(0, 4,  "  ESC[xD      = Cursor Back\\");
-					//text_string(0, 5,  "  ESC[xE      = Cursor Next Line\\");
-					//text_string(0, 6,  "  ESC[xF      = Cursor Previous Line\\");
-					//text_string(0, 7,  "  ESC[xG      = Cursor Horizontal Absolute\\");
-					//text_string(0, 8,  "  ESC[y;xH    = Cursor Position\\");
-					//text_string(0, 9,  "  ESC[xJ      = Erase in Display\\");
-					//text_string(0, 10, "  ESC[xK      = Erase in Line\\");
-					//text_string(0, 11, "  ESC[xS      = Scroll Up\\");
-					//text_string(0, 12, "  ESC[xT      = Scroll Down\\");
-					//text_string(0, 13, "Special Commands:\\");
-					//text_string(0, 14, "  ESC;H       = Help Menu\\");
-					//text_string(0, 15, "  ESC;T       = Terminal Mode\\");
-					//text_string(0, 16, "  ESC;C       = Color Mode\\");
-					//text_string(0, 17, "  ESC;Axx     = Set Memory Start Address\\");
-					//text_string(0, 18, "  ESC;Dxx...  = Set Memory Data Length followed by Data\\");
-					//text_string(0, 19, "Memory Addresses:\\");
-					//text_string(0, 20, "  $4000-$47FF = Terminal Data\\");
-					//text_string(0, 21, "  $4800-$4FFF = Terminal Mappings\\");
-					//text_string(0, 22, "  $5000-$DFFF = Color Data\\");
+					text_string(0, 0, text_help_0);
+					text_string(0, 1, text_help_1);
+					text_string(0, 2, text_help_2);
+					text_string(0, 3, text_help_3);
+					text_string(0, 4, text_help_4);
+					text_string(0, 5, text_help_5);
+					text_string(0, 6, text_help_6);
+					text_string(0, 7, text_help_7);
+					text_string(0, 8, text_help_8);
+					text_string(0, 9, text_help_9);
+					text_string(0, 10, text_help_10);
+					text_string(0, 11, text_help_11);
+					text_string(0, 12, text_help_12);
+					text_string(0, 13, text_help_13);
+					text_string(0, 14, text_help_14);
+					text_string(0, 15, text_help_15);
+					text_string(0, 16, text_help_16);
+					text_string(0, 17, text_help_17);
+					text_string(0, 18, text_help_18);
+					text_string(0, 19, text_help_19);
+					text_string(0, 20, text_help_20);
+					text_string(0, 21, text_help_21);
+					text_string(0, 22, text_help_22);
 
 					term_cursor = 1840;
 
