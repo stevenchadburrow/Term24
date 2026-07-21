@@ -343,7 +343,7 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
 	" ESC;T      = Terminal Mode   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
-	" ESC;C      = Color Mode      \\" };
+	" ESC;xC      = Color Mode     \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
 	" ESC;Axx    = Memory Address  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_18[48] = {
@@ -2507,9 +2507,12 @@ void __attribute__((section("usercode"))) run()
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if (term_sequence == 2 && term_keycode[2] == 'C')
+				else if ((term_sequence == 2 || term_sequence == 3) && term_keycode[2] == 'C')
 				{
 					term_mode = 1;
+
+					if (term_sequence == 3) term_orientation = (unsigned int)(term_keycode[term_sequence]);
+					else term_orientation = 0;
 
 					// turn on colors
 					TRISB = (TRISB & 0x00FF) | 0x8000;
