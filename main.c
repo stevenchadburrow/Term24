@@ -339,15 +339,15 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[32] = {
 	"Special Commands:             \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[32] = {
-	" ESC;H      = Help Menu       \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
 	" ESC;T      = Terminal Mode   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
+	" ESC;xC     = Color Mode      \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
-	" ESC;xC      = Color Mode     \\" };
+	" ESC;xE     = Echo On/Off     \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
-	" ESC;Axx    = Memory Address  \\" };
+	" ESC;Ahh    = Memory Address  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_18[48] = {
-	" ESC;Dxx... = Data Length followed by Values  \\" };
+	" ESC;Dhh... = Data Length followed by Values  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_19[32] = {
 	"Memory Addresses:             \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_20[32] = {
@@ -1445,7 +1445,8 @@ void __attribute__((section("usercode"))) run()
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// read external switches for different input types
-	option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
+	//option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
+	option = (PORTB & 0x0003);
 
 	// game over-ride
 	if ((PORTB & 0x0004) == 0x0000) option = 4; // text mode
@@ -2507,17 +2508,43 @@ void __attribute__((section("usercode"))) run()
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if ((term_sequence == 2 || term_sequence == 3) && term_keycode[2] == 'C')
+				else if (term_sequence == 2 && term_keycode[2] == 'C')
 				{
 					term_mode = 1;
 
-					if (term_sequence == 3) term_orientation = (unsigned int)(term_keycode[term_sequence]);
-					else term_orientation = 0;
+					term_orientation = 0;
 
 					// turn on colors
 					TRISB = (TRISB & 0x00FF) | 0x8000;
 					PORTB = 0x0000;
 
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 3 && term_keycode[3] == 'C')
+				{
+					term_mode = 1;
+
+					term_orientation = (int)(term_keycode[term_sequence-1]-'0');
+
+					// turn on colors
+					TRISB = (TRISB & 0x00FF) | 0x8000;
+					PORTB = 0x0000;
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 2 && term_keycode[2] == 'E')
+				{
+					term_setting_echo = 1 - term_setting_echo;
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 3 && term_keycode[3] == 'E')
+				{
+					term_setting_echo = (int)(term_keycode[term_sequence-1]-'0');
+					
 					term_command = 0;
 					term_sequence = 0;
 				}
