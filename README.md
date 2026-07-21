@@ -14,5 +14,7 @@ It uses the PIC24EP512GP202 microcontroller, running at 65 MIPS and containing 5
 <img src="Term24-Text-Help.jpg"><br>
 <img src="Term24-Color-Dark.jpg"><br>
 <img src="Term24-Color-Bright.jpg"><br>
+<img src="Term24-Tetra-Text.jpg"><br>
+<img src="Term24-Tetra-Color.jpg"><br>
 <img src="Term24-PCB-Front.png"><br>
 <img src="Term24-PCB-Back.png"><br>
