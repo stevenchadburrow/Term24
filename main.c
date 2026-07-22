@@ -699,7 +699,7 @@ void __attribute__((section("usercode"))) play()
 	signed int prev_y = 1;
 	signed int prev_rot = 0;
 	unsigned char color_value = 0x7F;
-	unsigned int hold_time = 5; // adjust accordingly
+	unsigned int hold_time = 6; // adjust accordingly
 	unsigned int text_shift = 25; // adjust accordingly
 	unsigned int color_shift = 15; // adjust accordingly
 	unsigned int color_scale = 3; // adjust accordingly
