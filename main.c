@@ -625,6 +625,9 @@ void __attribute__((section("usercode"))) play()
 {
 	term_game_seed = 0;
 
+	CNPUA = 0x000F; // pull-up on RA3 to RA0
+	CNPUB = (CNPUB | 0x000C); // pull-ups on RB3 and RB2
+
 	if (term_mode == 0)
 	{
 		// turn off colors
@@ -700,6 +703,9 @@ void __attribute__((section("usercode"))) play()
 	unsigned int text_shift = 25; // adjust accordingly
 	unsigned int color_shift = 15; // adjust accordingly
 	unsigned int color_scale = 3; // adjust accordingly
+
+	// for PS/2 keyboard
+	unsigned int keyboard_state = 0x003F;
 
 	term_game_button_held = hold_time;
 
@@ -807,9 +813,79 @@ void __attribute__((section("usercode"))) play()
 
 		if (descend == 0)
 		{
-			term_game_button_previous = term_game_button_current;
+			// read PS/2 keyboard
+			if (term_ps2_synced > 0)	
+			{
+				term_last_channel = (DMALCA & 0x000F);
+				term_last_address = ((DSADRL + 2) & 0x01FF);
 
-			term_game_button_current = ((PORTB & 0x000C) << 2) | (PORTA & 0x000F);
+				if (term_last_channel == 0x0000)
+				{
+					if ((((term_position) & 0x00FF) << 1) != term_last_address)
+					{
+						if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0xE0) // term_ps2_extended
+						{
+							term_ps2_extended = 1;
+						}
+						else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0xF0) // term_ps2_release
+						{
+							term_ps2_release = 1;
+						}
+						else
+						{
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x1D) // W = up
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0008);
+								else keyboard_state = (keyboard_state & 0x0037);
+							}
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x1B) // S = down
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0004);
+								else keyboard_state = (keyboard_state & 0x003B);
+							}
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x1C) // A = left
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0002);
+								else keyboard_state = (keyboard_state & 0x003D);
+							}
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x23) // D = right
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0001);
+								else keyboard_state = (keyboard_state & 0x003E);
+							}
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x3B) // J = 'B'
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0010);
+								else keyboard_state = (keyboard_state & 0x002F);
+							}
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x42) // K = 'A'
+							{
+								if (term_ps2_release > 0) keyboard_state = (keyboard_state | 0x0020);
+								else keyboard_state = (keyboard_state & 0x001F);
+							}
+
+							term_ps2_extended = 0;
+							term_ps2_release = 0;
+						}
+
+						term_position++;
+						if (term_position >= 256) term_position -= 256;
+					}
+				}
+			}
+			else
+			{
+				keyboard_state = 0x003F;
+			}
+
+			// buttons AND keyboard combined together
+			term_game_button_previous = term_game_button_current;
+			term_game_button_current = ((((PORTB & 0x000C) << 2) | (PORTA & 0x000F)) & keyboard_state);
 
 			if (term_game_button_current == 0x003F)
 			{
@@ -857,6 +933,14 @@ void __attribute__((section("usercode"))) play()
 						{
 							term_game_piece_x--;
 						}
+
+						check = 1;
+					}
+
+					if ((term_game_button_current & 0x0008) == 0x0000 &&
+						((term_game_button_previous & 0x0008) == 0x0008 || term_game_button_held == 0)) // up
+					{
+						// do nothing
 
 						check = 1;
 					}
@@ -1448,11 +1532,7 @@ void __attribute__((section("usercode"))) run()
 	//option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
 	option = (PORTB & 0x0003);
 
-	// game over-ride
-	if ((PORTB & 0x0004) == 0x0000) option = 4; // text mode
-	if ((PORTB & 0x0008) == 0x0000) option = 5; // color mode
-
-	CNPUB = 0x0000; // turn off pull-ups on RB1 and RB0
+	CNPUB = 0x000C; // turn off pull-ups on RB1 and RB0
 
 	if (option == 0) // UART
 	{
@@ -1461,7 +1541,7 @@ void __attribute__((section("usercode"))) run()
 		TRISB = 0x7F3F;
 		LATB = 0x0000;
 
-		CNPUB = 0x0060; // pull-up on RB6 and RB5
+		CNPUB = (CNPUB | 0x0060); // pull-up on RB6 and RB5
 
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
@@ -1506,7 +1586,7 @@ void __attribute__((section("usercode"))) run()
 		TRISB = 0x7F7F;
 		LATB = 0x0000;
 
-		CNPUB = 0x0060; // pull-up on RB6 and RB5
+		CNPUB = (CNPUB | 0x0060); // pull-up on RB6 and RB5
 
 		// sets UART1 to appropriate pins
 		RPINR18 = 0x0025; // UART1-RX on RP37
@@ -1541,6 +1621,8 @@ void __attribute__((section("usercode"))) run()
 		// delay and then detect baud rate
 		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 		U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
+
+		term_ps2_synced = 0;
 
 		text_string(32, 24, text_menu_2);
 	}
@@ -1602,26 +1684,26 @@ void __attribute__((section("usercode"))) run()
 
 		text_string(32, 24, text_menu_4);
 	}
-	else if (option == 4 || option == 5) // GAME
-	{
-		TRISA = 0x000F;
-		LATA = 0x0000;
-		TRISB = 0x7F7F;
-		LATB = 0x0000;
 
-		CNPUA = 0x000F; // pull-up on RA3 to RA0
-		CNPUB = 0x000C; // pull-ups on RB3 and RB2
-		
-		if (option == 4) term_mode = 0; // text mode
-		else if (option == 5) term_mode = 1; // color mode
-
-		play(); // play game
-
-		while (1) { } // infinite loop
-	}
+	unsigned int buttons;
 
 	while (1)
 	{
+		// play game if buttons pressed
+		buttons = (PORTB & 0x000C);
+		if ((buttons & 0x0004) == 0x0000 || (buttons & 0x0008) == 0x0000)
+		{
+			// for safety
+			term_bottom = 576-1; // usually 768-1 by default
+
+			if ((buttons & 0x0004) == 0x0000) term_mode = 0; // text mode
+			if ((buttons & 0x0008) == 0x0000) term_mode = 1; // color mode
+
+			play(); // play game
+	
+			while (1) { } // infinite loop
+		}
+
 		term_last_channel = (DMALCA & 0x000F);
 		term_last_address = ((DSADRL + 2) & 0x01FF);
 
@@ -1680,6 +1762,19 @@ void __attribute__((section("usercode"))) run()
 								term_ps2_shift = 0;
 								term_ps2_release = 0;
 							}
+						}
+						else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05 ||
+							(term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) // F1 or F2 to play game
+						{
+							// for safety
+							term_bottom = 576-1; // usually 768-1 by default
+
+							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05) term_mode = 0; // text mode
+							else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) term_mode = 1; // color mode
+
+							play(); // play game
+
+							while (1) { } // infinite loop
 						}
 						else
 						{
