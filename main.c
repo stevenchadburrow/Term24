@@ -125,7 +125,29 @@ volatile unsigned char __attribute__((address(0x4800))) term_map[2048];
 volatile unsigned char __attribute__((address(0x5000))) term_color[12288];
 volatile __eds__ unsigned char __attribute__((address(0x8000), eds)) term_color_eds[20480];
 
-void __attribute__((section("usercode"))) term_data(unsigned int a, unsigned char d)
+unsigned char __attribute__((section("usercode"))) term_read(unsigned int a)
+{
+	if (a >= 0x4000 && a < 0x4800)
+	{
+		return term_memory[a-0x4000];
+	}
+	else if (a >= 0x4800 && a < 0x5000)
+	{
+		return term_map[a-0x2800];
+	}
+	else if (a >= 0x5000 && a < 0x8000)
+	{
+		return term_color[a-0x5000];
+	}
+	else if (a >= 0x8000 && a < 0xD000)
+	{
+		return term_color_eds[a-0x8000];
+	}
+
+	return 0x00;
+};
+
+void __attribute__((section("usercode"))) term_write(unsigned int a, unsigned char d)
 {
 	if (a >= 0x4000 && a < 0x4800)
 	{
@@ -311,7 +333,7 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_
 	"PARALLEL CLK/PORT             \\" };
 
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[32] = {
-	"ANSI Commands:                \\" };
+	"ANSI/Special Commands:        \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[32] = {
 	" ESC[xA     = Cursor Up       \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[32] = {
@@ -337,17 +359,17 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[32] = {
 	" ESC[xT     = Scroll Down     \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[32] = {
-	"Special Commands:             \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[32] = {
 	" ESC;T      = Terminal Mode   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[32] = {
 	" ESC;xC     = Color Mode      \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
 	" ESC;xE     = Echo On/Off     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
 	" ESC;Ahh    = Memory Address  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
+	" ESC;R      = Read then Inc   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_18[48] = {
-	" ESC;Dhh... = Data Length followed by Values  \\" };
+	" ESC;Whh... = Write Length followed by Values \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_19[32] = {
 	"Memory Addresses:             \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_20[32] = {
@@ -1725,7 +1747,7 @@ void __attribute__((section("usercode"))) run()
 					}
 					else
 					{
-						term_data(term_dma_address, (term_array[(term_position & 0x00FF)] & 0x00FF));
+						term_write(term_dma_address, (term_array[(term_position & 0x00FF)] & 0x00FF));
 
 						term_dma_address++;
 						term_dma_data--;
@@ -2650,7 +2672,22 @@ void __attribute__((section("usercode"))) run()
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if (term_sequence == 4 && term_keycode[2] == 'D')
+				else if (term_sequence == 2 && term_keycode[2] == 'R')
+				{
+					//if (term_setting_echo > 0)
+					//{
+						if (option == 0)
+						{
+							U1TXREG = term_read(term_dma_address);
+						}
+					//}
+
+					term_dma_address++;
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 4 && term_keycode[2] == 'W')
 				{
 					term_dma_data = (unsigned int)(term_keycode[term_sequence-1]) * 256 + (unsigned int)(term_keycode[term_sequence]);
 					
