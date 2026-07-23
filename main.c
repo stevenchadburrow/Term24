@@ -336,11 +336,11 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[64] = {
 	"ANSI Commands:                    Special Commands:           \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[64] = {
-	" ESC[xA     = Cursor Up            ESC;T      = Text Mode     \\" };
+	" ESC[xA     = Cursor Up            ESC;xT     = Text Mode     \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[64] = {
 	" ESC[xB     = Cursor Down          ESC;xC     = Color Mode    \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[64] = {
-	" ESC[xC     = Cursor Forward       ESC;xS     = Scroll Mode   \\" };
+	" ESC[xC     = Cursor Forward  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[64] = {
 	" ESC[xD     = Cursor Back          ESC;xE     = Echo On/Off   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[64] = {
@@ -362,11 +362,13 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[64] = {
 	"Memory Addresses:             \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[64] = {
-	" $4000-47FF = Text Mapping    \\" };
+	" $3000-37FF = Text Mapping    \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[64] = {
-	" $4800-4FFF = Text Data       \\" };
+	" $3800-4FFF = Text Only Data  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[64] = {
-	" $5000-DFFF = Color Data      \\" };
+	" $5000-7FFF = Text/Color Data \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[64] = {
+	" $8000-DFFF = EDS Color Data  \\" };
 
 
 void __attribute__((section("usercode"))) color_character(int x, int y, unsigned char c)
@@ -2645,6 +2647,7 @@ void __attribute__((section("usercode"))) run()
 					text_string(0, 14, text_help_14);
 					text_string(0, 15, text_help_15);
 					text_string(0, 16, text_help_16);
+					text_string(0, 17, text_help_17);
 
 					term_cursor = bottom_cursor-80;
 
@@ -2658,6 +2661,47 @@ void __attribute__((section("usercode"))) run()
 					// turn off colors
 					TRISB = (TRISB & 0x00FF) | 0x7F00;
 					PORTB = 0x0000;
+
+					if (term_bottom_text == 0x0780)
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x3E80; // 200 lines
+						bottom_cursor = 2000;
+						term_cursor = bottom_cursor - 80;
+					}
+					else
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x0780; // 24 lines
+						bottom_cursor = 1920;
+						term_cursor = bottom_cursor - 80;
+					}
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 3 && term_keycode[3] == 'T')
+				{
+					term_mode = 0;
+
+					// turn off colors
+					TRISB = (TRISB & 0x00FF) | 0x7F00;
+					PORTB = 0x0000;
+
+					if ((int)(term_keycode[term_sequence-1]-'0') > 0)
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x3E80; // 200 lines
+						bottom_cursor = 2000;
+						term_cursor = bottom_cursor - 80;
+					}
+					else
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x0780; // 24 lines
+						bottom_cursor = 1920;
+						term_cursor = bottom_cursor - 80;
+					}
 
 					term_command = 0;
 					term_sequence = 0;
@@ -2703,46 +2747,6 @@ void __attribute__((section("usercode"))) run()
 				{
 					term_setting_echo = (int)(term_keycode[term_sequence-1]-'0');
 					
-					term_command = 0;
-					term_sequence = 0;
-				}
-				else if (term_sequence == 2 && term_keycode[2] == 'S')
-				{
-					if (term_bottom_text == 0x0780)
-					{
-						term_scroll = 0;
-						term_bottom_text = 0x3E80; // 200 lines
-						bottom_cursor = 2000;
-						term_cursor = bottom_cursor - 80;
-					}
-					else
-					{
-						term_scroll = 0;
-						term_bottom_text = 0x0780; // 24 lines
-						bottom_cursor = 1920;
-						term_cursor = bottom_cursor - 80;
-					}
-
-					term_command = 0;
-					term_sequence = 0;
-				}
-				else if (term_sequence == 3 && term_keycode[3] == 'S')
-				{
-					if ((int)(term_keycode[term_sequence-1]-'0') > 0)
-					{
-						term_scroll = 0;
-						term_bottom_text = 0x3E80; // 200 lines
-						bottom_cursor = 2000;
-						term_cursor = bottom_cursor - 80;
-					}
-					else
-					{
-						term_scroll = 0;
-						term_bottom_text = 0x0780; // 24 lines
-						bottom_cursor = 1920;
-						term_cursor = bottom_cursor - 80;
-					}
-
 					term_command = 0;
 					term_sequence = 0;
 				}
