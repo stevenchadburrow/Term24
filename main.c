@@ -72,73 +72,74 @@ Whole frame	806	16.6656
 #include <p24Exxxx.h>
 
 // unused memory here
-volatile unsigned char __attribute__((address(0x3800))) term_game_field[512]; // only uses 200 bytes plus borders
-volatile unsigned char __attribute__((address(0x3A00))) term_pixels[80];
-volatile unsigned char __attribute__((address(0x3A50))) term_buffer[80];
-volatile unsigned int __attribute__((address(0x3AA0))) term_scanline;
-volatile unsigned int __attribute__((address(0x3AA2))) term_location;
-volatile unsigned int __attribute__((address(0x3AA4))) term_counter;
-volatile unsigned int __attribute__((address(0x3AA6))) term_stretch;
-volatile unsigned int __attribute__((address(0x3AA8))) term_scroll;
-volatile unsigned int __attribute__((address(0x3AAA))) term_orientation;
-volatile unsigned int __attribute__((address(0x3AAC))) term_cursor; 
-volatile unsigned int __attribute__((address(0x3AAE))) term_mode; // 0 = terminal, 1 = color
-volatile unsigned int __attribute__((address(0x3AB0))) term_bottom; // only used in color mode, 0x02FF by default
-volatile unsigned int __attribute__((address(0x3AB2))) term_parallel;
-volatile unsigned int __attribute__((address(0x3AB4))) term_last_channel;
-volatile unsigned int __attribute__((address(0x3AB6))) term_last_address;
-volatile unsigned int __attribute__((address(0x3AB8))) term_ps2_release;
-volatile unsigned int __attribute__((address(0x3ABA))) term_ps2_extended;
-volatile unsigned int __attribute__((address(0x3ABC))) term_ps2_shift;
-volatile unsigned int __attribute__((address(0x3ABE))) term_ps2_capslock;
-volatile unsigned int __attribute__((address(0x3AC0))) term_ps2_synced;
-volatile unsigned int __attribute__((address(0x3AC2))) term_sequence;
-volatile unsigned int __attribute__((address(0x3AC4))) term_command;
-volatile unsigned int __attribute__((address(0x3AC6))) term_print;
-volatile unsigned int __attribute__((address(0x3AC8))) term_dma_address;
-volatile unsigned int __attribute__((address(0x3ACA))) term_dma_data; 
-volatile unsigned int __attribute__((address(0x3ACC))) term_position;
-volatile unsigned int __attribute__((address(0x3ACE))) term_setting_cursor;
-volatile unsigned int __attribute__((address(0x3AD0))) term_setting_echo;
-volatile unsigned char __attribute__((address(0x3AD2))) term_keycode[8];
-volatile unsigned int __attribute__((address(0x3ADA))) term_game_piece_current;
-volatile unsigned int __attribute__((address(0x3ADC))) term_game_piece_next;
-volatile signed int __attribute__((address(0x3ADE))) term_game_piece_x;
-volatile signed int __attribute__((address(0x3AE0))) term_game_piece_y;
-volatile signed int __attribute__((address(0x3AE2))) term_game_piece_rot;
-volatile unsigned int __attribute__((address(0x3AE4))) term_game_button_current;
-volatile unsigned int __attribute__((address(0x3AE6))) term_game_button_previous;
-volatile unsigned int __attribute__((address(0x3AE8))) term_game_button_held;
-volatile unsigned int __attribute__((address(0x3AEA))) term_game_delay_low;
-volatile unsigned int __attribute__((address(0x3AEC))) term_game_delay_high;
-volatile unsigned int __attribute__((address(0x3AEE))) term_game_counter_low;
-volatile unsigned int __attribute__((address(0x3AF0))) term_game_counter_high;
-volatile unsigned int __attribute__((address(0x3AF2))) term_game_points;
-volatile unsigned int __attribute__((address(0x3AF4))) term_game_tally;
-volatile unsigned int __attribute__((address(0x3AF6))) term_game_seed;
+volatile unsigned char __attribute__((address(0x2800))) term_game_field[512]; // only uses 200 bytes plus borders
+volatile unsigned char __attribute__((address(0x2A00))) term_pixels[80];
+volatile unsigned char __attribute__((address(0x2A50))) term_buffer[80];
+volatile unsigned int __attribute__((address(0x2AA0))) term_scanline;
+volatile unsigned int __attribute__((address(0x2AA2))) term_location;
+volatile unsigned int __attribute__((address(0x2AA4))) term_counter;
+volatile unsigned int __attribute__((address(0x2AA6))) term_stretch;
+volatile unsigned int __attribute__((address(0x2AA8))) term_scroll;
+volatile unsigned int __attribute__((address(0x2AAA))) term_orientation;
+volatile unsigned int __attribute__((address(0x2AAC))) term_cursor; 
+volatile unsigned int __attribute__((address(0x2AAE))) term_mode; // 0 = text, 1 = color
+volatile unsigned int __attribute__((address(0x2AB0))) term_bottom_text; // 0x0780 by default
+volatile unsigned int __attribute__((address(0x2AB2))) term_bottom_color; // 0x02FF by default
+volatile unsigned int __attribute__((address(0x2AB4))) term_parallel;
+volatile unsigned int __attribute__((address(0x2AB6))) term_last_channel;
+volatile unsigned int __attribute__((address(0x2AB8))) term_last_address;
+volatile unsigned int __attribute__((address(0x2ABA))) term_ps2_release;
+volatile unsigned int __attribute__((address(0x2ABC))) term_ps2_extended;
+volatile unsigned int __attribute__((address(0x2ABE))) term_ps2_shift;
+volatile unsigned int __attribute__((address(0x2AC0))) term_ps2_capslock;
+volatile unsigned int __attribute__((address(0x2AC2))) term_signal_synced;
+volatile unsigned int __attribute__((address(0x2AC4))) term_sequence;
+volatile unsigned int __attribute__((address(0x2AC6))) term_command;
+volatile unsigned int __attribute__((address(0x2AC8))) term_print;
+volatile unsigned int __attribute__((address(0x2ACA))) term_dma_address;
+volatile unsigned int __attribute__((address(0x2ACC))) term_dma_data; 
+volatile unsigned int __attribute__((address(0x2ACE))) term_position;
+volatile unsigned char __attribute__((address(0x2AD0))) term_keycode[8];
+volatile unsigned int __attribute__((address(0x2AD8))) term_setting_cursor;
+volatile unsigned int __attribute__((address(0x2ADA))) term_setting_echo;
+volatile unsigned int __attribute__((address(0x2ADC))) term_game_piece_current;
+volatile unsigned int __attribute__((address(0x2ADE))) term_game_piece_next;
+volatile signed int __attribute__((address(0x2AE0))) term_game_piece_x;
+volatile signed int __attribute__((address(0x2AE2))) term_game_piece_y;
+volatile signed int __attribute__((address(0x2AE4))) term_game_piece_rot;
+volatile unsigned int __attribute__((address(0x2AE6))) term_game_button_current;
+volatile unsigned int __attribute__((address(0x2AE8))) term_game_button_previous;
+volatile unsigned int __attribute__((address(0x2AEA))) term_game_button_held;
+volatile unsigned int __attribute__((address(0x2AEC))) term_game_delay_low;
+volatile unsigned int __attribute__((address(0x2AEE))) term_game_delay_high;
+volatile unsigned int __attribute__((address(0x2AF0))) term_game_counter_low;
+volatile unsigned int __attribute__((address(0x2AF2))) term_game_counter_high;
+volatile unsigned int __attribute__((address(0x2AF4))) term_game_points;
+volatile unsigned int __attribute__((address(0x2AF6))) term_game_tally;
+volatile unsigned int __attribute__((address(0x2AF8))) term_game_seed;
 // unused memory here
-volatile unsigned char __attribute__((address(0x3B00))) term_ps2_conversion[256];
-volatile unsigned int __attribute__((address(0x3C00))) term_array[256];
+volatile unsigned char __attribute__((address(0x2B00))) term_ps2_conversion[256];
+volatile unsigned int __attribute__((address(0x2C00))) term_array[256];
 // unused memory here (generally used by heap, 512 bytes)
-volatile unsigned char __attribute__((address(0x4000))) term_memory[2048];
-volatile unsigned char __attribute__((address(0x4800))) term_map[2048];
-volatile unsigned char __attribute__((address(0x5000))) term_color[12288];
+volatile unsigned char __attribute__((address(0x3000))) term_map[2048];
+volatile unsigned char __attribute__((address(0x3800))) term_memory[18432];
+//volatile unsigned char __attribute__((address(0x5000))) term_color[12288]; // integrated with term_memory[] now
 volatile __eds__ unsigned char __attribute__((address(0x8000), eds)) term_color_eds[20480];
 
 unsigned char __attribute__((section("usercode"))) term_read(unsigned int a)
 {
-	if (a >= 0x4000 && a < 0x4800)
+	if (a >= 0x3000 && a < 0x3800)
 	{
-		return term_memory[a-0x4000];
+		return term_map[a-0x3000];
 	}
-	else if (a >= 0x4800 && a < 0x5000)
+	else if (a >= 0x3800 && a < 0x8000)
 	{
-		return term_map[a-0x2800];
+		return term_memory[a-0x3800];
 	}
-	else if (a >= 0x5000 && a < 0x8000)
-	{
-		return term_color[a-0x5000];
-	}
+	//else if (a >= 0x5000 && a < 0x8000)
+	//{
+	//	return term_color[a-0x5000];
+	//}
 	else if (a >= 0x8000 && a < 0xD000)
 	{
 		return term_color_eds[a-0x8000];
@@ -149,18 +150,18 @@ unsigned char __attribute__((section("usercode"))) term_read(unsigned int a)
 
 void __attribute__((section("usercode"))) term_write(unsigned int a, unsigned char d)
 {
-	if (a >= 0x4000 && a < 0x4800)
+	if (a >= 0x3000 && a < 0x3800)
 	{
-		term_memory[a-0x4000] = d;
+		term_map[a-0x3000] = d;
 	}
-	else if (a >= 0x4800 && a < 0x5000)
+	else if (a >= 0x3800 && a < 0x8000)
 	{
-		term_map[a-0x2800] = d;
+		term_memory[a-0x3800] = d;
 	}
-	else if (a >= 0x5000 && a < 0x8000)
-	{
-		term_color[a-0x5000] = d;
-	}
+	//else if (a >= 0x5000 && a < 0x8000)
+	//{
+	//	term_color[a-0x5000] = d;
+	//}
 	else if (a >= 0x8000 && a < 0xD000)
 	{
 		term_color_eds[a-0x8000] = d;
@@ -323,60 +324,48 @@ const __prog__ unsigned char __attribute__((space(prog), section("usercode"))) t
 
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_0[32] = {
 	"Term24    ESC;H for Help      \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_1[32] = {
-	"UART 9600-8-N-1               \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_1[48] = {
+	"UART 9600-8-N-1                                \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_2[48] = {
-	"PS/2 Press = or send 0x55 to sync ?\??\?-8-O-1  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_3[32] = {
-	"SPI CLK/MOSI                  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_4[32] = {
-	"PARALLEL CLK/PORT             \\" };
+	"PS/2 Press = or send $55 to sync ?\??\?-8-O-1  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_3[48] = {
+	"SPI (3-WIRE) Send 2 bytes then pause to sync   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_4[48] = {
+	"PARALLEL                                       \\" };
 
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[32] = {
-	"ANSI/Special Commands:        \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[32] = {
-	" ESC[xA     = Cursor Up       \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[32] = {
-	" ESC[xB     = Cursor Down     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[32] = {
-	" ESC[xC     = Cursor Forward  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[32] = {
-	" ESC[xD     = Cursor Back     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[32] = {
-	" ESC[xE     = Cursor Next Line\\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[32] = {
-	" ESC[xF     = Cursor Prev Line\\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[32] = {
-	" ESC[xG     = Cursor Horz Abs \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[64] = {
+	"ANSI Commands:                    Special Commands:           \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[64] = {
+	" ESC[xA     = Cursor Up            ESC;T      = Text Mode     \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[64] = {
+	" ESC[xB     = Cursor Down          ESC;xC     = Color Mode    \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[64] = {
+	" ESC[xC     = Cursor Forward       ESC;xS     = Scroll Mode   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[64] = {
+	" ESC[xD     = Cursor Back          ESC;xE     = Echo On/Off   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[64] = {
+	" ESC[xE     = Cursor Next Line     ESC;hhA    = Mem Address   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[64] = {
+	" ESC[xF     = Cursor Prev Line     ESC;hhR    = Read Memory   \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[64] = {
+	" ESC[xG     = Cursor Horz Abs      ESC;hhW... = Write Memory  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[64] = {
 	" ESC[y;xH   = Cursor Position \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[64] = {
 	" ESC[xJ     = Erase in Display\\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[64] = {
 	" ESC[xK     = Erase in Line   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_11[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_11[64] = {
 	" ESC[xS     = Scroll Up       \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[64] = {
 	" ESC[xT     = Scroll Down     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[32] = {
-	" ESC;T      = Terminal Mode   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[32] = {
-	" ESC;xC     = Color Mode      \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[32] = {
-	" ESC;xE     = Echo On/Off     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[32] = {
-	" ESC;Ahh    = Memory Address  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[32] = {
-	" ESC;R      = Read then Inc   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_18[48] = {
-	" ESC;Whh... = Write Length followed by Values \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_19[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[64] = {
 	"Memory Addresses:             \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_20[32] = {
-	" $4000-47FF = Terminal Data   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_21[32] = {
-	" $4800-4FFF = Terminal Mapping\\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_22[32] = {
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[64] = {
+	" $4000-47FF = Text Mapping    \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[64] = {
+	" $4800-4FFF = Text Data       \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[64] = {
 	" $5000-DFFF = Color Data      \\" };
 
 
@@ -392,8 +381,8 @@ void __attribute__((section("usercode"))) color_character(int x, int y, unsigned
 
 		for (int j=0; j<6; j++)
 		{
-			if ((v & 0x80) == 0x80) term_color[(y+i)*128+(x+j)] = 0x7F;
-			else term_color[(y+i)*128+(x+j)] = 0x00;
+			if ((v & 0x80) == 0x80) term_memory[(y+i)*128+(x+j)+0x1800] = 0x7F;
+			else term_memory[(y+i)*128+(x+j)+0x1800] = 0x00;
 
 			v <<= 1;
 		}
@@ -656,7 +645,7 @@ void __attribute__((section("usercode"))) play()
 		TRISB = (TRISB & 0x00FF) | 0x7F00;
 		PORTB = 0x0000;
 
-		term_bottom = 600-1; // usually 768-1 by default
+		term_bottom_color = 600-1; // usually 768-1 by default
 
 		for (int i=0; i<2048; i++) term_memory[i] = ' ';
 	}
@@ -668,11 +657,11 @@ void __attribute__((section("usercode"))) play()
 
 		term_orientation = 2; // layered
 		term_scroll = 0; // no scrolling
-		term_bottom = 576-1; // usually 768-1 by default
+		term_bottom_color = 576-1; // usually 768-1 by default
 
 		for (int i=0; i<12288; i++)
 		{
-			term_color[i] = 0x00;
+			term_memory[i+0x1800] = 0x00;
 		}
 
 		for (int i=0; i<20480; i++)
@@ -836,7 +825,7 @@ void __attribute__((section("usercode"))) play()
 		if (descend == 0)
 		{
 			// read PS/2 keyboard
-			if (term_ps2_synced > 0)	
+			if (term_signal_synced > 0)	
 			{
 				term_last_channel = (DMALCA & 0x000F);
 				term_last_address = ((DSADRL + 2) & 0x01FF);
@@ -1279,7 +1268,7 @@ void __attribute__((section("usercode"))) play()
 							{
 								for (int j=0; j<color_scale; j++)
 								{
-									term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x00;
+									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x00;
 								}
 							}
 						}
@@ -1291,11 +1280,11 @@ void __attribute__((section("usercode"))) play()
 								{
 									if (i == 0 || j == 0)
 									{
-										term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x15;
+										term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x15;
 									}
 									else
 									{
-										term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x2A;
+										term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x2A;
 									}
 								}
 							}
@@ -1306,7 +1295,7 @@ void __attribute__((section("usercode"))) play()
 							{
 								for (int j=0; j<color_scale; j++)
 								{
-									term_color[(y*color_scale+i)*128+(x*color_scale+j)+color_shift] = 0x7F;
+									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x7F;
 								}
 							}
 						}
@@ -1366,7 +1355,7 @@ void __attribute__((section("usercode"))) play()
 
 		while (term_scanline > 0) { }
 
-		while (term_scanline <= term_bottom) { }
+		while (term_scanline <= term_bottom_color) { }
 	}
 };
 
@@ -1437,7 +1426,7 @@ void __attribute__((section("usercode"))) setup()
 	// clear video memory
 	for (int i=0; i<12288; i++)
 	{
-		term_color[i] = 0x00;
+		term_memory[i+0x1800] = 0x00;
 	}
 
 	for (int i=0; i<20480; i++)
@@ -1445,7 +1434,7 @@ void __attribute__((section("usercode"))) setup()
 		term_color_eds[i] = 0x00;
 	}
 
-	for (int i=0; i<2048; i++)
+	for (int i=0; i<6144; i++)
 	{
 		term_memory[i] = 0x0020; // spaces
 	}
@@ -1496,8 +1485,9 @@ void __attribute__((section("usercode"))) setup()
 	term_cursor = 0;
 	term_position = 0;
 	term_mode = 0;
-	term_bottom = 768-1; // default
-
+	term_bottom_text = 0x0780; // default
+	term_bottom_color = 0x02FF; // default
+	
 	asm("mov.w #0x8000, w1"); // bit 15
 	asm("mov.w 0x0110, w0");
 	asm("ior.w w0, w1, w0");
@@ -1527,7 +1517,7 @@ void __attribute__((section("usercode"))) run()
 	term_ps2_extended = 0;
 	term_ps2_shift = 0;
 	term_ps2_capslock = 0;
-	term_ps2_synced = 0;
+	term_signal_synced = 0;
 	term_sequence = 0;
 	term_command = 0;
 	term_print = 0;
@@ -1543,7 +1533,7 @@ void __attribute__((section("usercode"))) run()
 	term_keycode[7] = 0;
 
 	term_scroll = 0;
-	term_cursor = 1840;
+	term_cursor = term_bottom_text-80;
 	if (term_setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
 
 	CNPUB = 0x000F; // pull-up on RB3 to RB0
@@ -1644,11 +1634,11 @@ void __attribute__((section("usercode"))) run()
 		for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 		U1MODEbits.ABAUD = 1; // detect baud rate of UART1 (by pressing = sign on the keyboard)
 
-		term_ps2_synced = 0;
+		term_signal_synced = 0;
 
 		text_string(32, 24, text_menu_2);
 	}
-	else if (option == 2) // SPI
+	else if (option == 2) // SPI (needs MODE1 apparently?)
 	{
 		TRISA = 0x000F;
 		LATA = 0x0000;
@@ -1665,13 +1655,14 @@ void __attribute__((section("usercode"))) run()
 		IFS2bits.SPI2IF = 0; // clear flag
 		IEC2bits.SPI2IE = 0; // disable interrupts
 		IPC8bits.SPI2IP = 0x01; // lowest interrupt priority 
-		SPI2STAT = 0x0001; // interrupt when data on receive buffer 
+		SPI2STAT = 0x000C; // interrupt when data on receive buffer 
 		SPI2CON1 = 0x0000; // 8-bit slave mode
-		SPI2CON2 = 0x0001; // enhanced buffer enabled
+		SPI2CON2 = 0x0000; // enhanced buffer disabled
+		SPI2STATbits.SPIEN = 1; // enable
 		IFS2bits.SPI2IF = 0; // clear flag
 		//IEC2bits.SPI2IE = 1; // enable interrupts
-	
-		// set up DMA0 with UART1
+
+		// set up DMA0 with SPI2
 		DMA0CON = 0x0000; // continuous, no ping-pong, word-aligned
 		DMA0CNT = 255; // 256 bytes in array
 		DMA0REQ = 0x0021; // SPI2 Transfer Done
@@ -1681,6 +1672,10 @@ void __attribute__((section("usercode"))) run()
 		IFS0bits.DMA0IF = 0;
 		IEC0bits.DMA0IE = 1;
 		DMA0CONbits.CHEN = 1;
+
+		SPI2BUF = 0x0000; // dummy transfer
+
+		term_signal_synced = 0;
 
 		text_string(32, 24, text_menu_3);
 	}
@@ -1708,6 +1703,7 @@ void __attribute__((section("usercode"))) run()
 	}
 
 	unsigned int buttons;
+	unsigned int bottom_cursor = 1920;
 
 	while (1)
 	{
@@ -1716,7 +1712,7 @@ void __attribute__((section("usercode"))) run()
 		if ((buttons & 0x0004) == 0x0000 || (buttons & 0x0008) == 0x0000)
 		{
 			// for safety
-			term_bottom = 576-1; // usually 768-1 by default
+			term_bottom_color = 576-1; // usually 768-1 by default
 
 			if ((buttons & 0x0004) == 0x0000) term_mode = 0; // text mode
 			if ((buttons & 0x0008) == 0x0000) term_mode = 1; // color mode
@@ -1735,22 +1731,36 @@ void __attribute__((section("usercode"))) run()
 			{
 				if (option == 0 || option == 2 || option == 3) // UART/SPI/PARALLEL
 				{
-					if (term_dma_data == 0)
+					if (option == 2 && term_signal_synced == 0) // SPI, but modules needs to be reset
 					{
-						term_keycode[term_sequence] = (term_array[(term_position & 0x00FF)] & 0x00FF);
-
-						if (term_setting_echo > 0 && term_command != 2)
-						{
-							if (option == 0) U1TXREG = term_keycode[term_sequence];
-						}
-						term_print = 1;
+						SPI2STATbits.SPIEN = 0; // disable
+						SPI2CON1bits.MODE16 = 1; // toggle MODE16 bit to reset counters
+						SPI2CON1bits.MODE16 = 0;
+						for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<4; j++) { } } // short delay
+						SPI2STATbits.SPIEN = 1; // enable
+						IFS2bits.SPI2IF = 0; // clear flag
+						term_signal_synced = 1;
 					}
 					else
 					{
-						term_write(term_dma_address, (term_array[(term_position & 0x00FF)] & 0x00FF));
+						if (term_dma_data == 0)
+						{
+							term_keycode[term_sequence] = (term_array[(term_position & 0x00FF)] & 0x00FF);
 
-						term_dma_address++;
-						term_dma_data--;
+							if (term_setting_echo > 0 && term_command != 2)
+							{
+								if (option == 0) U1TXREG = term_keycode[term_sequence];
+								else if (option == 2) SPI2BUF = term_keycode[term_sequence];
+							}
+							term_print = 1;
+						}
+						else
+						{
+							term_write(term_dma_address, (term_array[(term_position & 0x00FF)] & 0x00FF));
+
+							term_dma_address++;
+							term_dma_data--;
+						}
 					}
 
 					term_position++;
@@ -1758,9 +1768,9 @@ void __attribute__((section("usercode"))) run()
 				}
 				else if (option == 1) // PS/2
 				{
-					if (U1MODEbits.ABAUD == 0 && term_ps2_synced == 0) term_ps2_synced = 1;
+					if (U1MODEbits.ABAUD == 0 && term_signal_synced == 0) term_signal_synced = 1;
 
-					if (term_ps2_synced > 0)
+					if (term_signal_synced > 0)
 					{
 						if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0xE0) // term_ps2_extended
 						{
@@ -1789,7 +1799,7 @@ void __attribute__((section("usercode"))) run()
 							(term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) // F1 or F2 to play game
 						{
 							// for safety
-							term_bottom = 576-1; // usually 768-1 by default
+							term_bottom_color = 576-1; // usually 768-1 by default
 
 							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05) term_mode = 0; // text mode
 							else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) term_mode = 1; // color mode
@@ -1825,6 +1835,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
 										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x12) // DC2 = arrow down
@@ -1843,6 +1859,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[0];
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
+										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
 										}
 									}
 								}
@@ -1863,6 +1885,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
 										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x14) // DC3 = arrow left
@@ -1881,6 +1909,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[0];
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
+										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
 										}
 									}
 								}
@@ -1901,6 +1935,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
 										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
+										}
 									}
 								}
 								else if (term_keycode[term_sequence] == 0x19) // EM = home
@@ -1920,6 +1960,12 @@ void __attribute__((section("usercode"))) run()
 											U1TXREG = term_keycode[1];
 											U1TXREG = term_keycode[2];
 										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[0];
+											SPI2BUF = term_keycode[1];
+											SPI2BUF = term_keycode[2];
+										}
 									}
 								}
 								else
@@ -1929,6 +1975,10 @@ void __attribute__((section("usercode"))) run()
 										if (option == 0)
 										{
 											U1TXREG = term_keycode[term_sequence];
+										}
+										else if (option == 2)
+										{
+											SPI2BUF = term_keycode[term_sequence];
 										}
 									}
 								}
@@ -1950,9 +2000,9 @@ void __attribute__((section("usercode"))) run()
 		{
 			term_print = 0;
 
-			if (term_setting_cursor > 0 && term_cursor < 1920) 
+			if (term_setting_cursor > 0 && term_cursor < bottom_cursor) 
 			{
-				term_memory[(term_scroll*80+term_cursor)%1920] = ((term_memory[(term_scroll*80+term_cursor)%1920] + 0x80) & 0x00FF);
+				term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = ((term_memory[(term_scroll*80+term_cursor)%term_bottom_text] + 0x80) & 0x00FF);
 			}
 
 			if (term_sequence == 0)
@@ -1974,12 +2024,12 @@ void __attribute__((section("usercode"))) run()
 				else if (term_keycode[0] == 0x0A) // line feed
 				{
 					term_cursor -= (term_cursor % 80);
-					if (term_cursor < 1840) term_cursor += 80;
+					if (term_cursor < bottom_cursor) term_cursor += 80;
 				}
 				else if (term_keycode[0] == 0x0C) // form feed (same as line feed?)
 				{
 					term_cursor -= (term_cursor % 80);
-					if (term_cursor < 1840) term_cursor += 80;
+					if (term_cursor < bottom_cursor) term_cursor += 80;
 				}
 				else if (term_keycode[0] == 0x0D) // return
 				{
@@ -1987,14 +2037,14 @@ void __attribute__((section("usercode"))) run()
 				}
 				else if (term_keycode[0] >= 0x20 && term_keycode[0] < 0x7F) // regular characters
 				{
-					if (term_cursor >= 1920)
+					if (term_cursor >= bottom_cursor)
 					{
 						term_cursor -= 80;
-						for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+						if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 						term_scroll++;
-						if (term_scroll >= 24) term_scroll -= 24;
+						if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 					}
-					term_memory[(term_scroll*80+term_cursor)%1920] = term_keycode[0];
+					term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = term_keycode[0];
 					term_cursor++;
 				}	
 				else if (term_keycode[0] == 0x7F) // delete
@@ -2003,26 +2053,26 @@ void __attribute__((section("usercode"))) run()
 				}
 				else if (term_keycode[0] >= 0x80 && term_keycode[0] < 0xA0) // remappable characters
 				{
-					if (term_cursor >= 1920)
+					if (term_cursor >= bottom_cursor)
 					{
 						term_cursor -= 80;
-						for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+						if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 						term_scroll++;
-						if (term_scroll >= 24) term_scroll -= 24;
+						if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 					}
-					term_memory[(term_scroll*80+term_cursor)%1920] = term_keycode[0];
+					term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = term_keycode[0];
 					term_cursor++;
 				}
 				else if (term_keycode[0] >= 0xA0 && term_keycode[0] < 0xFF) // inverted characters
 				{
-					if (term_cursor >= 1920)
+					if (term_cursor >= bottom_cursor)
 					{
 						term_cursor -= 80;
-						for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+						if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 						term_scroll++;
-						if (term_scroll >= 24) term_scroll -= 24;
+						if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 					}
-					term_memory[(term_scroll*80+term_cursor)%1920] = term_keycode[0];
+					term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = term_keycode[0];
 					term_cursor++;
 				}
 				else if (term_keycode[0] == 0xFF) // unused
@@ -2093,7 +2143,7 @@ void __attribute__((section("usercode"))) run()
 						{
 							case 2:
 							{
-								if (term_cursor < 1840) term_cursor += 80;
+								if (term_cursor < bottom_cursor-80) term_cursor += 80;
 								break;
 							}
 							case 3:
@@ -2101,7 +2151,7 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									if (term_cursor < 1840) term_cursor += 80;
+									if (term_cursor < bottom_cursor-80) term_cursor += 80;
 								}
 								break;
 							}
@@ -2110,7 +2160,7 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-2]-'0') * 10 + (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									if (term_cursor < 1840) term_cursor += 80;
+									if (term_cursor < bottom_cursor-80) term_cursor += 80;
 								}
 								break;
 							}
@@ -2193,7 +2243,7 @@ void __attribute__((section("usercode"))) run()
 							case 2:
 							{
 								term_cursor -= (term_cursor % 80);
-								if (term_cursor < 1840) term_cursor += 80;
+								if (term_cursor < term_bottom_text-80) term_cursor += 80;
 								break;
 							}
 							case 3:
@@ -2202,7 +2252,7 @@ void __attribute__((section("usercode"))) run()
 								for (int i=0; i<val; i++)
 								{
 									term_cursor -= (term_cursor % 80);
-									if (term_cursor < 1840) term_cursor += 80;
+									if (term_cursor < term_bottom_text-80) term_cursor += 80;
 								}
 								break;
 							}
@@ -2212,7 +2262,7 @@ void __attribute__((section("usercode"))) run()
 								for (int i=0; i<val; i++)
 								{
 									term_cursor -= (term_cursor % 80);
-									if (term_cursor < 1840) term_cursor += 80;
+									if (term_cursor < term_bottom_text-80) term_cursor += 80;
 								}
 								break;
 							}
@@ -2390,11 +2440,11 @@ void __attribute__((section("usercode"))) run()
 						{
 							case 2:
 							{
-								for (int i=term_cursor; i<1920; i++)
+								for (int i=term_cursor; i<bottom_cursor; i++)
 								{
 									term_memory[i] = 0x20; // space
 								}
-								term_memory[(term_scroll*80+term_cursor)%1920] = 0xA0; // inverted space
+								term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = 0xA0; // inverted space
 								break;
 							}
 							case 3:
@@ -2402,7 +2452,7 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-1]-'0');
 								if (val == 0)
 								{
-									for (int i=term_cursor; i<1920; i++)
+									for (int i=term_cursor; i<bottom_cursor; i++)
 									{
 										term_memory[i] = 0x20; // space
 									}
@@ -2416,14 +2466,7 @@ void __attribute__((section("usercode"))) run()
 								}
 								else if (val == 2)
 								{
-									for (int i=0; i<1920; i++)
-									{
-										term_memory[i] = 0x20; // space
-									}
-								}
-								else if (val == 3)
-								{
-									for (int i=0; i<3840; i++)
+									for (int i=0; i<bottom_cursor; i++)
 									{
 										term_memory[i] = 0x20; // space
 									}
@@ -2470,7 +2513,7 @@ void __attribute__((section("usercode"))) run()
 										term_memory[val2] = 0x20; // space
 										val2++;
 									}
-									term_memory[(term_scroll*80+term_cursor)%1920] = 0x20;
+									term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = 0x20;
 								}
 								else if (val1 == 2)
 								{
@@ -2495,9 +2538,9 @@ void __attribute__((section("usercode"))) run()
 						{
 							case 2:
 							{
-								for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+								if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 								term_scroll++;
-								if (term_scroll >= 24) term_scroll -= 24;
+								if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 								break;
 							}
 							case 3:
@@ -2505,9 +2548,9 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 									term_scroll++;
-									if (term_scroll >= 24) term_scroll -= 24;
+									if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 								}
 								break;
 							}
@@ -2516,9 +2559,9 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-2]-'0') * 10 + (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 									term_scroll++;
-									if (term_scroll >= 24) term_scroll -= 24;
+									if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
 								}
 								break;
 							}
@@ -2534,9 +2577,9 @@ void __attribute__((section("usercode"))) run()
 						{
 							case 2:
 							{
-								if (term_scroll == 0) term_scroll = 23;
+								if (term_scroll == 0) term_scroll = (term_bottom_text/80)-1;
 								else term_scroll--;
-								for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+								if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 								break;
 							}
 							case 3:
@@ -2544,9 +2587,9 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									if (term_scroll == 0) term_scroll = 23;
+									if (term_scroll == 0) term_scroll = (term_bottom_text/80)-1;
 									else term_scroll--;
-									for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 								}
 								break;
 							}
@@ -2555,9 +2598,9 @@ void __attribute__((section("usercode"))) run()
 								int val = (int)(term_keycode[term_sequence-2]-'0') * 10 + (int)(term_keycode[term_sequence-1]-'0');
 								for (int i=0; i<val; i++)
 								{
-									if (term_scroll == 0) term_scroll = 23;
+									if (term_scroll == 0) term_scroll = (term_bottom_text/80)-1;
 									else term_scroll--;
-									for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
 								}
 								break;
 							}
@@ -2602,14 +2645,8 @@ void __attribute__((section("usercode"))) run()
 					text_string(0, 14, text_help_14);
 					text_string(0, 15, text_help_15);
 					text_string(0, 16, text_help_16);
-					text_string(0, 17, text_help_17);
-					text_string(0, 18, text_help_18);
-					text_string(0, 19, text_help_19);
-					text_string(0, 20, text_help_20);
-					text_string(0, 21, text_help_21);
-					text_string(0, 22, text_help_22);
 
-					term_cursor = 1840;
+					term_cursor = bottom_cursor-80;
 
 					term_command = 0;
 					term_sequence = 0;
@@ -2627,6 +2664,8 @@ void __attribute__((section("usercode"))) run()
 				}
 				else if (term_sequence == 2 && term_keycode[2] == 'C')
 				{
+					term_bottom_color = 768-1; // usually 768-1 by default
+
 					term_mode = 1;
 
 					term_orientation = 0;
@@ -2640,6 +2679,8 @@ void __attribute__((section("usercode"))) run()
 				}
 				else if (term_sequence == 3 && term_keycode[3] == 'C')
 				{
+					term_bottom_color = 768-1; // usually 768-1 by default
+
 					term_mode = 1;
 
 					term_orientation = (int)(term_keycode[term_sequence-1]-'0');
@@ -2665,31 +2706,82 @@ void __attribute__((section("usercode"))) run()
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if (term_sequence == 4 && term_keycode[2] == 'A')
+				else if (term_sequence == 2 && term_keycode[2] == 'S')
 				{
-					term_dma_address = (unsigned int)(term_keycode[term_sequence-1]) * 256 + (unsigned int)(term_keycode[term_sequence]);
+					if (term_bottom_text == 0x0780)
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x3E80; // 200 lines
+						bottom_cursor = 2000;
+						term_cursor = bottom_cursor - 80;
+					}
+					else
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x0780; // 24 lines
+						bottom_cursor = 1920;
+						term_cursor = bottom_cursor - 80;
+					}
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 3 && term_keycode[3] == 'S')
+				{
+					if ((int)(term_keycode[term_sequence-1]-'0') > 0)
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x3E80; // 200 lines
+						bottom_cursor = 2000;
+						term_cursor = bottom_cursor - 80;
+					}
+					else
+					{
+						term_scroll = 0;
+						term_bottom_text = 0x0780; // 24 lines
+						bottom_cursor = 1920;
+						term_cursor = bottom_cursor - 80;
+					}
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 4 && term_keycode[4] == 'A')
+				{
+					term_dma_address = (unsigned int)(term_keycode[term_sequence-2]) * 256 + (unsigned int)(term_keycode[term_sequence-1]);
 					
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if (term_sequence == 2 && term_keycode[2] == 'R')
+				else if (term_sequence == 4 && term_keycode[4] == 'R')
 				{
-					//if (term_setting_echo > 0)
-					//{
-						if (option == 0)
-						{
-							U1TXREG = term_read(term_dma_address);
-						}
-					//}
+					term_dma_data = (unsigned int)(term_keycode[term_sequence-2]) * 256 + (unsigned int)(term_keycode[term_sequence-1]);
 
-					term_dma_address++;
+					while (term_dma_data > 0)
+					{
+						//if (term_setting_echo > 0)
+						//{
+							if (option == 0)
+							{
+								U1TXREG = term_read(term_dma_address);
+							}
+							else if (option == 2)
+							{
+								SPI2BUF = term_read(term_dma_address);
+							}
+						//}
+
+						term_dma_address++;
+
+						term_dma_data--;
+					}
 
 					term_command = 0;
 					term_sequence = 0;
 				}
-				else if (term_sequence == 4 && term_keycode[2] == 'W')
+				else if (term_sequence == 4 && term_keycode[4] == 'W')
 				{
-					term_dma_data = (unsigned int)(term_keycode[term_sequence-1]) * 256 + (unsigned int)(term_keycode[term_sequence]);
+					term_dma_data = (unsigned int)(term_keycode[term_sequence-2]) * 256 + (unsigned int)(term_keycode[term_sequence-1]);
 					
 					term_command = 0;
 					term_sequence = 0;
@@ -2705,9 +2797,9 @@ void __attribute__((section("usercode"))) run()
 				}
 			}
 
-			if (term_setting_cursor > 0 && term_cursor < 1920) 
+			if (term_setting_cursor > 0 && term_cursor < term_bottom_text) 
 			{
-				term_memory[(term_scroll*80+term_cursor)%1920] = ((term_memory[(term_scroll*80+term_cursor)%1920] + 0x80) & 0x00FF);
+				term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = ((term_memory[(term_scroll*80+term_cursor)%term_bottom_text] + 0x80) & 0x00FF);
 			}
 		}
 	}
@@ -2770,14 +2862,14 @@ int __attribute__((address(0x000200))) main()
 	CLKDIVbits.PLLPRE = 0x3; // PLLPRE = 3
 	CLKDIVbits.PLLPOST = 0x0; // PLLPOST = 0
 
-	CNPUB = 0x0010; // pull-up on RB4
+	CNPDB = 0x0010; // pull-down on RB4
 
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// check if RB4 is grounded, and if so, run firmware update
 	int update = (PORTB & 0x0010);
 
-	CNPUB = 0x0000; // disable pull-up on RB4
+	CNPDB = 0x0000; // disable pull-down on RB4
 
 	// firmware update uses UART, will rewrite all but main() essentially
 	// [file.hex is the Intel HEX file from the dist/default/production folder]
@@ -2788,7 +2880,7 @@ int __attribute__((address(0x000200))) main()
 	// Wait, then:
 	// cat file.hex > /dev/ttyUSB0
 
-	if (update == 0x0000)
+	if (update == 0x0010)
 	{
 		// output on RB6 (RP38)
 		TRISB = 0xFFBF;

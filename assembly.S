@@ -1,20 +1,21 @@
 
 ; Assembly code for Term24
 
-.equ term_pixels, 0x3A00
-.equ term_buffer, 0x3A50
-.equ term_scanline, 0x3AA0
-.equ term_location, 0x3AA2
-.equ term_counter, 0x3AA4
-.equ term_stretch, 0x3AA6
-.equ term_scroll, 0x3AA8
-.equ term_orientation, 0x3AAA
-.equ term_cursor, 0x3AAC
-.equ term_mode, 0x3AAE
-.equ term_bottom, 0x3AB0
+.equ term_pixels, 0x2A00
+.equ term_buffer, 0x2A50
+.equ term_scanline, 0x2AA0
+.equ term_location, 0x2AA2
+.equ term_counter, 0x2AA4
+.equ term_stretch, 0x2AA6
+.equ term_scroll, 0x2AA8
+.equ term_orientation, 0x2AAA
+.equ term_cursor, 0x2AAC
+.equ term_mode, 0x2AAE
+.equ term_bottom_text, 0x2AB0
+.equ term_bottom_color, 0x2AB2
 
-.equ term_memory, 0x4000
-.equ term_map, 0x4800
+.equ term_map, 0x3000
+.equ term_memory, 0x3800 ; overlaps term_color
 .equ term_color, 0x5000
 .equ term_color_eds, 0x8000
 
@@ -1134,12 +1135,17 @@ TermScanline_Continue:
 	bra TermScanline_Copy
 
 	; find location in characters
-	mov.w #term_memory, w1
-	mov.w term_location, w0
+	mov.w #term_memory, w0
+	mov.w term_location, w1
 	add.w w0, w1, w1
-	mov.w #0x4780, w3
+	mov.w term_bottom_text, w3
+	add.w w0, w3, w3
+
+	; if on last line do not scroll (in default mode)
 	cpslt.w w1, w3
 	bra TermScanline_Half
+
+	; else, use scrolling
 	mov.w term_scroll, w0
 	sl.w w0, #0x0002, w2
 	add.w w0, w2, w0
@@ -1147,9 +1153,9 @@ TermScanline_Continue:
 	add.w w0, w1, w1 
 	
 	; roll over when scrolling
-	mov.w #0x0780, w0
+	mov.w term_bottom_text, w2
 	cpslt.w w1, w3
-	sub.w w1, w0, w1
+	sub.w w1, w2, w1
 
 TermScanline_Half:
 	; add to location
@@ -1419,7 +1425,6 @@ TermScanline_Half:
 	add.w w0, w4, w0
 	mov.b [w2+w0], [w3++]
 
-
 	bra TermScanline_Calculate
 
 TermScanline_Copy:
@@ -1525,7 +1530,7 @@ TermScanline_Calculate:
 	mov.w w0, term_stretch
 	mov.w #0x0003, w1
 	cpseq.w w0, w1
-	bra TermScanline_Blank
+	bra TermScanline_Pop
 	mov.w #0x0000, w0
 	mov.w w0, term_stretch
 
@@ -1543,6 +1548,17 @@ TermScanline_Calculate:
 	cpsne.w w0, w1
 	add.w w2, w3, w3
 	mov.w w3, term_location
+
+TermScanline_Pop:
+
+	pop w5
+	pop w4
+	pop w3
+	pop w2
+	pop w1
+	pop w0
+
+	return
 
 TermScanline_Blank:
 
@@ -1564,7 +1580,7 @@ TermScanline_Exit:
 TermScanline_Color:
 
 	; if not visible region, exit
-	mov.w term_bottom, w1 ; default of 0x02FF, 768 visible lines
+	mov.w term_bottom_color, w1 ; default of 0x02FF, 768 visible lines
 	cpslt.w w0, w1 ; skip if less than
 	bra TermScanline_Blank
 
