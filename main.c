@@ -2767,12 +2767,12 @@ void __attribute__((section("usercode"))) run()
 						//{
 							if (option == 0)
 							{
-								U1TXREG = term_read(term_dma_address);
+								U1TXREG = term_read(term_dma_address); // this needs a flag to make sure it doesn't over-run itself
 							}
-							else if (option == 2)
-							{
-								SPI2BUF = term_read(term_dma_address);
-							}
+							//else if (option == 2)
+							//{
+							//	SPI2BUF = term_read(term_dma_address); // because this is slave, it needs master to send dummy data, use flag to check
+							//}
 						//}
 
 						term_dma_address++;
