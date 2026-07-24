@@ -635,7 +635,7 @@ void __attribute__((section("usercode"))) play()
 	{
 		// turn off colors
 		TRISB = (TRISB & 0x00FF) | 0x7F00;
-		PORTB = 0x0000;
+		PORTB = (PORTB & 0x00FF) | 0x0000;
 
 		term_bottom_color = 600-1; // usually 768-1 by default
 
@@ -645,7 +645,7 @@ void __attribute__((section("usercode"))) play()
 	{
 		// turn on colors
 		TRISB = (TRISB & 0x00FF) | 0x8000;
-		PORTB = 0x0000;
+		PORTB = (PORTB & 0x00FF) | 0x0000;
 
 		term_orientation = 2; // layered
 		term_scroll = 0; // no scrolling
@@ -1345,8 +1345,8 @@ void __attribute__((section("usercode"))) play()
 			redraw = 0;
 		}
 
+		// wait for v-blank
 		while (term_scanline > 0) { }
-
 		while (term_scanline <= term_bottom_color) { }
 	}
 };
@@ -1533,8 +1533,8 @@ void __attribute__((section("usercode"))) run()
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// read external switches for different input types
-	//option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
-	option = (PORTB & 0x0003);
+	option = (((PORTB & 0x0003) ^ 0x0003) & 0x0003);
+	//option = (PORTB & 0x0003);
 
 	CNPUB = 0x000C; // turn off pull-ups on RB1 and RB0
 
@@ -1699,23 +1699,33 @@ void __attribute__((section("usercode"))) run()
 
 	while (1)
 	{
-		// play game if buttons pressed
-		buttons = (PORTB & 0x000C);
-		if ((buttons & 0x0004) == 0x0000 || (buttons & 0x0008) == 0x0000)
+		if (term_parallel == 0)
 		{
-			// for safety
-			term_bottom_color = 576-1; // usually 768-1 by default
+			// play game if buttons pressed
+			buttons = (PORTB & 0x000C);
+			if ((buttons & 0x0004) == 0x0000 || (buttons & 0x0008) == 0x0000)
+			{
+				// wait for v-blank
+				while (term_scanline > 0) { }
+				while (term_scanline <= term_bottom_color) { }
 
-			if ((buttons & 0x0004) == 0x0000) term_mode = 0; // text mode
-			if ((buttons & 0x0008) == 0x0000) term_mode = 1; // color mode
+				// for safety
+				term_bottom_color = 128-1; // usually 768-1 by default
 
-			play(); // play game
-	
-			while (1) { } // infinite loop
+				if ((buttons & 0x0004) == 0x0000) term_mode = 0; // text mode
+				if ((buttons & 0x0008) == 0x0000) term_mode = 1; // color mode
+
+				play(); // play game
+		
+				while (1) { } // infinite loop
+			}
 		}
 
-		term_last_channel = (DMALCA & 0x000F);
-		term_last_address = ((DSADRL + 2) & 0x01FF);
+		if (term_parallel == 0)
+		{
+			term_last_channel = (DMALCA & 0x000F);
+			term_last_address = ((DSADRL + 2) & 0x01FF);
+		}
 
 		if (term_last_channel == 0x0000)
 		{
@@ -1790,8 +1800,12 @@ void __attribute__((section("usercode"))) run()
 						else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05 ||
 							(term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) // F1 or F2 to play game
 						{
+							// wait for v-blank
+							while (term_scanline > 0) { }
+							while (term_scanline <= term_bottom_color) { }
+
 							// for safety
-							term_bottom_color = 576-1; // usually 768-1 by default
+							term_bottom_color = 128-1; // usually 768-1 by default
 
 							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05) term_mode = 0; // text mode
 							else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) term_mode = 1; // color mode
@@ -2950,7 +2964,7 @@ int __attribute__((address(0x000200))) main()
 	ANSELB = 0x0000;
 	LATB = 0x0000;
 	TRISB = 0xFFFF;
-	CNPUB = 0x0000;
+	CNPUB = 0x0003;
 	CNPDB = 0x0000;
 
 	// disable watchdog timer
@@ -2966,7 +2980,7 @@ int __attribute__((address(0x000200))) main()
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
 	// check if RA3-RA0 is grounded, and if so, run firmware update
-	int update = (PORTA & 0x000F);
+	int update = (PORTA & 0x000F) | ((PORTB & 0x0003) << 4);
 
 	CNPUA = 0x0000; // disable pull-ups for RA3-RA0
 
@@ -2979,7 +2993,7 @@ int __attribute__((address(0x000200))) main()
 	// Wait, then:
 	// cat file.hex > /dev/ttyUSB0
 
-	if (update == 0x0000)
+	if (update == 0x0030)
 	{
 		// output on RB6 (RP38)
 		TRISB = 0xFFBF;
