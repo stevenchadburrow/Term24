@@ -333,38 +333,32 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_4[48] = {
 	"PARALLEL                                       \\" };
 
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[64] = {
-	"ANSI Commands:                    Special Commands:           \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[64] = {
-	" ESC[xA     = Cursor Up            ESC;xT     = Text Mode     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[64] = {
-	" ESC[xB     = Cursor Down          ESC;xC     = Color Mode    \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[64] = {
-	" ESC[xC     = Cursor Forward       ESC;xE     = Echo On/Off   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[64] = {
-	" ESC[xD     = Cursor Back                                     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[64] = {
-	" ESC[xE     = Cursor Next Line                                \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[64] = {
-	" ESC[xF     = Cursor Prev Line     ESC;hhA    = Mem Address   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[64] = {
-	" ESC[xG     = Cursor Horz Abs      ESC;hhR    = Read Memory   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[64] = {
-	" ESC[y;xH   = Cursor Position      ESC;hhW... = Write Memory  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[64] = {
-	" ESC[xJ     = Erase in Display\\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[64] = {
-	" ESC[xK     = Erase in Line   \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_11[64] = {
-	" ESC[xS     = Scroll Up       \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[64] = {
-	" ESC[xT     = Scroll Down     \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[64] = {
-	"Memory Addresses:             \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[64] = {
-	" $3000-37FF = Text Mapping       $5000-7FFF = Text/Color Data \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[64] = {
-	" $3800-4FFF = Text Only Data     $8000-DFFF = EDS Color Data  \\" };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[80] = {
+	"ANSI Commands:                  Special Commands:                               " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[80] = {
+	" ESC[xA   = Cursor Up            ESC;xT     = Text Mode                         " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[80] = {
+	" ESC[xB   = Cursor Down          ESC;xC     = Color Mode                        " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[80] = {
+	" ESC[xC   = Cursor Forward       ESC;xE     = Echo On/Off                       " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[80] = {
+	" ESC[xD   = Cursor Back          ESC;xS     = Scan from Cursor                  " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[80] = {
+	" ESC[xE   = Cursor Next Line     ESC;hhA    = Mem Address                       " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[80] = {
+	" ESC[xF   = Cursor Prev Line     ESC;hhR    = Read Memory                       " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[80] = {
+	" ESC[xG   = Cursor Horz Abs      ESC;hhW... = Write Memory                      " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[80] = {
+	" ESC[y;xH = Cursor Position     Memory Addresses:                               " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[80] = {
+	" ESC[xJ   = Erase in Display     $3000-37FF = Text Mapping                      " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[80] = {
+	" ESC[xK   = Erase in Line        $3800-4FFF = Text Only Data                    " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_11[80] = {
+	" ESC[xS   = Scroll Up            $5000-7FFF = Text/Color Data                   " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[80] = {
+	" ESC[xT   = Scroll Down          $8000-DFFF = EDS Color Data                    " };
 
 
 void __attribute__((section("usercode"))) color_character(int x, int y, unsigned char c)
@@ -2563,6 +2557,19 @@ void __attribute__((section("usercode"))) run()
 								}
 								break;
 							}
+							case 5:
+							{
+								int val = (int)(term_keycode[term_sequence-3]-'0') * 100 + 
+									(int)(term_keycode[term_sequence-2]-'0') * 10 + 
+									(int)(term_keycode[term_sequence-1]-'0');
+								for (int i=0; i<val; i++)
+								{
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+									term_scroll++;
+									if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
+								}
+								break;
+							}
 							default:
 							{
 								break;
@@ -2602,6 +2609,19 @@ void __attribute__((section("usercode"))) run()
 								}
 								break;
 							}
+							case 5:
+							{
+								int val = (int)(term_keycode[term_sequence-3]-'0') * 100 + 
+									(int)(term_keycode[term_sequence-2]-'0') * 10 + 
+									(int)(term_keycode[term_sequence-1]-'0');
+								for (int i=0; i<val; i++)
+								{
+									if (term_scroll == 0) term_scroll = (term_bottom_text/80)-1;
+									else term_scroll--;
+									if (term_bottom_text <= 1920) for (int i=0; i<80; i++) term_memory[term_scroll * 80 + i] = 0x20; // space
+								}
+								break;
+							}
 							default:
 							{
 								break;
@@ -2626,24 +2646,58 @@ void __attribute__((section("usercode"))) run()
 			{
 				if (term_sequence == 2 && term_keycode[2] == 'H')
 				{
-					text_string(0, 0, text_help_0);
-					text_string(0, 1, text_help_1);
-					text_string(0, 2, text_help_2);
-					text_string(0, 3, text_help_3);
-					text_string(0, 4, text_help_4);
-					text_string(0, 5, text_help_5);
-					text_string(0, 6, text_help_6);
-					text_string(0, 7, text_help_7);
-					text_string(0, 8, text_help_8);
-					text_string(0, 9, text_help_9);
-					text_string(0, 10, text_help_10);
-					text_string(0, 11, text_help_11);
-					text_string(0, 12, text_help_12);
-					text_string(0, 13, text_help_13);
-					text_string(0, 14, text_help_14);
-					text_string(0, 15, text_help_15);
+					unsigned char s[80];
 
-					term_cursor = bottom_cursor-80;
+					term_cursor -= term_cursor % 80;
+
+					for (int i=0; i<13; i++)
+					{
+						switch (i)
+						{
+							case 0: { for (int j=0; j<80; j++) { s[j] = text_help_0[j]; } break; }
+							case 1: { for (int j=0; j<80; j++) { s[j] = text_help_1[j]; } break; }
+							case 2: { for (int j=0; j<80; j++) { s[j] = text_help_2[j]; } break; }
+							case 3: { for (int j=0; j<80; j++) { s[j] = text_help_3[j]; } break; }
+							case 4: { for (int j=0; j<80; j++) { s[j] = text_help_4[j]; } break; }
+							case 5: { for (int j=0; j<80; j++) { s[j] = text_help_5[j]; } break; }
+							case 6: { for (int j=0; j<80; j++) { s[j] = text_help_6[j]; } break; }
+							case 7: { for (int j=0; j<80; j++) { s[j] = text_help_7[j]; } break; }
+							case 8: { for (int j=0; j<80; j++) { s[j] = text_help_8[j]; } break; }
+							case 9: { for (int j=0; j<80; j++) { s[j] = text_help_9[j]; } break; }
+							case 10: { for (int j=0; j<80; j++) { s[j] = text_help_10[j]; } break; }
+							case 11: { for (int j=0; j<80; j++) { s[j] = text_help_11[j]; } break; }
+							case 12: { for (int j=0; j<80; j++) { s[j] = text_help_12[j]; } break; }
+							default: { break; }
+						}
+
+						for (int j=0; j<80; j++)
+						{
+							term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = s[j];
+
+							if (term_setting_echo > 0)
+							{
+								if (option == 0)
+								{
+									while (U1STAbits.UTXBF > 0) { } // wait for buffer to be ready
+									U1TXREG = term_memory[(term_scroll*80+term_cursor)%term_bottom_text]; // send data
+								}
+								else if (option == 2)
+								{
+									while (SPI2STATbits.SPITBF > 0) { } // wait for buffer to be ready
+									SPI2BUF = term_memory[(term_scroll*80+term_cursor)%term_bottom_text]; // because this is slave, it needs master to send dummy data
+								}
+							}
+
+							if (term_cursor >= bottom_cursor)
+							{
+								term_cursor -= 80;
+								if (term_bottom_text <= 1920) for (int k=0; k<80; k++) term_memory[term_scroll * 80 + k] = 0x20; // space
+								term_scroll++;
+								if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
+							}
+							term_cursor++;
+						}
+					}
 
 					term_command = 0;
 					term_sequence = 0;
@@ -2741,6 +2795,53 @@ void __attribute__((section("usercode"))) run()
 				{
 					term_setting_echo = (int)(term_keycode[term_sequence-1]-'0');
 					
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if ((term_sequence == 2 && term_keycode[2] == 'S') ||
+					(term_sequence == 3 && term_keycode[3] == 'S') ||
+					(term_sequence == 4 && term_keycode[4] == 'S') ||
+					(term_sequence == 5 && term_keycode[5] == 'S'))
+				{
+					int val = 1;
+
+					switch (term_sequence)
+					{
+						case 2: { val = 1; break; }
+						case 3: { val = (int)(term_keycode[term_sequence-1]-'0'); break; }
+						case 4: { val = (int)(term_keycode[term_sequence-2]-'0') * 10 + (int)(term_keycode[term_sequence-1]-'0'); break; }
+						case 5: { val = (int)(term_keycode[term_sequence-3]-'0') * 100 + 
+							(int)(term_keycode[term_sequence-2]-'0') * 10 + 
+							(int)(term_keycode[term_sequence-1]-'0'); break; }
+						default: { val = 1; break; }
+					}
+
+					for (int i=0; i<val; i++)
+					{
+						//if (term_setting_echo > 0)
+						//{
+							if (option == 0)
+							{
+								while (U1STAbits.UTXBF > 0) { } // wait for buffer to be ready
+								U1TXREG = term_memory[(term_scroll*80+term_cursor)%term_bottom_text]; // send data
+							}
+							else if (option == 2)
+							{
+								while (SPI2STATbits.SPITBF > 0) { } // wait for buffer to be ready
+								SPI2BUF = term_memory[(term_scroll*80+term_cursor)%term_bottom_text]; // because this is slave, it needs master to send dummy data
+							}
+						//}
+
+						if (term_cursor >= bottom_cursor)
+						{
+							term_cursor -= 80;
+							if (term_bottom_text <= 1920) for (int j=0; j<80; j++) term_memory[term_scroll * 80 + j] = 0x20; // space
+							term_scroll++;
+							if (term_scroll >= (term_bottom_text/80)) term_scroll -= (term_bottom_text/80);
+						}
+						term_cursor++;
+					}
+
 					term_command = 0;
 					term_sequence = 0;
 				}
