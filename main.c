@@ -340,17 +340,17 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[64] = {
 	" ESC[xB     = Cursor Down          ESC;xC     = Color Mode    \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[64] = {
-	" ESC[xC     = Cursor Forward  \\" };
+	" ESC[xC     = Cursor Forward       ESC;xE     = Echo On/Off   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[64] = {
-	" ESC[xD     = Cursor Back          ESC;xE     = Echo On/Off   \\" };
+	" ESC[xD     = Cursor Back                                     \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_5[64] = {
-	" ESC[xE     = Cursor Next Line     ESC;hhA    = Mem Address   \\" };
+	" ESC[xE     = Cursor Next Line                                \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_6[64] = {
-	" ESC[xF     = Cursor Prev Line     ESC;hhR    = Read Memory   \\" };
+	" ESC[xF     = Cursor Prev Line     ESC;hhA    = Mem Address   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_7[64] = {
-	" ESC[xG     = Cursor Horz Abs      ESC;hhW... = Write Memory  \\" };
+	" ESC[xG     = Cursor Horz Abs      ESC;hhR    = Read Memory   \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_8[64] = {
-	" ESC[y;xH   = Cursor Position \\" };
+	" ESC[y;xH   = Cursor Position      ESC;hhW... = Write Memory  \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_9[64] = {
 	" ESC[xJ     = Erase in Display\\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_10[64] = {
@@ -362,13 +362,9 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[64] = {
 	"Memory Addresses:             \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_14[64] = {
-	" $3000-37FF = Text Mapping    \\" };
+	" $3000-37FF = Text Mapping       $5000-7FFF = Text/Color Data \\" };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_15[64] = {
-	" $3800-4FFF = Text Only Data  \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_16[64] = {
-	" $5000-7FFF = Text/Color Data \\" };
-const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_17[64] = {
-	" $8000-DFFF = EDS Color Data  \\" };
+	" $3800-4FFF = Text Only Data     $8000-DFFF = EDS Color Data  \\" };
 
 
 void __attribute__((section("usercode"))) color_character(int x, int y, unsigned char c)
@@ -2646,8 +2642,6 @@ void __attribute__((section("usercode"))) run()
 					text_string(0, 13, text_help_13);
 					text_string(0, 14, text_help_14);
 					text_string(0, 15, text_help_15);
-					text_string(0, 16, text_help_16);
-					text_string(0, 17, text_help_17);
 
 					term_cursor = bottom_cursor-80;
 
@@ -2767,12 +2761,14 @@ void __attribute__((section("usercode"))) run()
 						//{
 							if (option == 0)
 							{
-								U1TXREG = term_read(term_dma_address); // this needs a flag to make sure it doesn't over-run itself
+								while (U1STAbits.UTXBF > 0) { } // wait for buffer to be ready
+								U1TXREG = term_read(term_dma_address); // send data
 							}
-							//else if (option == 2)
-							//{
-							//	SPI2BUF = term_read(term_dma_address); // because this is slave, it needs master to send dummy data, use flag to check
-							//}
+							else if (option == 2)
+							{
+								while (SPI2STATbits.SPITBF > 0) { } // wait for buffer to be ready
+								SPI2BUF = term_read(term_dma_address); // because this is slave, it needs master to send dummy data
+							}
 						//}
 
 						term_dma_address++;
