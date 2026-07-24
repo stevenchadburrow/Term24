@@ -2943,7 +2943,7 @@ int __attribute__((address(0x000200))) main()
 	ANSELA = 0x0000;
 	LATA = 0x0000;
 	TRISA = 0xFFFF;
-	CNPUA = 0x0000;
+	CNPUA = 0x000F;
 	CNPDA = 0x0000;
 
 	// set Port B to defaults
@@ -2963,14 +2963,12 @@ int __attribute__((address(0x000200))) main()
 	CLKDIVbits.PLLPRE = 0x3; // PLLPRE = 3
 	CLKDIVbits.PLLPOST = 0x0; // PLLPOST = 0
 
-	CNPDB = 0x0010; // pull-down on RB4
-
 	for (unsigned int i=0; i<32768; i++) { for (unsigned int j=0; j<64; j++) { } } // delay
 
-	// check if RB4 is grounded, and if so, run firmware update
-	int update = (PORTB & 0x0010);
+	// check if RA3-RA0 is grounded, and if so, run firmware update
+	int update = (PORTA & 0x000F);
 
-	CNPDB = 0x0000; // disable pull-down on RB4
+	CNPUA = 0x0000; // disable pull-ups for RA3-RA0
 
 	// firmware update uses UART, will rewrite all but main() essentially
 	// [file.hex is the Intel HEX file from the dist/default/production folder]
@@ -2981,7 +2979,7 @@ int __attribute__((address(0x000200))) main()
 	// Wait, then:
 	// cat file.hex > /dev/ttyUSB0
 
-	if (update == 0x0010)
+	if (update == 0x0000)
 	{
 		// output on RB6 (RP38)
 		TRISB = 0xFFBF;
