@@ -100,7 +100,7 @@ volatile unsigned int __attribute__((address(0x2ACA))) term_dma_address;
 volatile unsigned int __attribute__((address(0x2ACC))) term_dma_data; 
 volatile unsigned int __attribute__((address(0x2ACE))) term_position;
 volatile unsigned char __attribute__((address(0x2AD0))) term_keycode[8];
-volatile unsigned int __attribute__((address(0x2AD8))) term_setting_cursor;
+volatile unsigned int __attribute__((address(0x2AD8))) term_setting_legacy;
 volatile unsigned int __attribute__((address(0x2ADA))) term_setting_echo;
 volatile unsigned int __attribute__((address(0x2ADC))) term_game_piece_current;
 volatile unsigned int __attribute__((address(0x2ADE))) term_game_piece_next;
@@ -334,11 +334,11 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_menu_
 	"PARALLEL                                       \\" };
 
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_0[80] = {
-	"ANSI Commands:                  Special Commands:                               " };
+	"Commands:                        ESC;xT     = Text Mode                         " };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_1[80] = {
-	" ESC[xA   = Cursor Up            ESC;xT     = Text Mode                         " };
+	" ESC[xA   = Cursor Up            ESC;xC     = Color Mode                        " };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_2[80] = {
-	" ESC[xB   = Cursor Down          ESC;xC     = Color Mode                        " };
+	" ESC[xB   = Cursor Down          ESC;xL     = Legacy On/Off                     " };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_3[80] = {
 	" ESC[xC   = Cursor Forward       ESC;xE     = Echo On/Off                       " };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_4[80] = {
@@ -1360,7 +1360,7 @@ void __attribute__((section("usercode"))) setup()
 	LATB = 0x0000;
 
 	// internal settings that might be changed
-	term_setting_cursor = 1;
+	term_setting_legacy = 1;
 	term_setting_echo = 1;
 
 	// sets Output Compare to appropriate pins
@@ -1499,6 +1499,9 @@ void __attribute__((section("usercode"))) setup()
 void __attribute__((section("usercode"))) run()
 {
 	int option = 0;
+	unsigned int buttons;
+	unsigned int display_cursor = 1;
+	unsigned int bottom_cursor = 1920;
 
 	text_string(0, 24, text_menu_0);
 
@@ -1526,7 +1529,7 @@ void __attribute__((section("usercode"))) run()
 
 	term_scroll = 0;
 	term_cursor = term_bottom_text-80;
-	if (term_setting_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
+	if (display_cursor > 0) term_memory[term_cursor] = 0xA0; // inverted space
 
 	CNPUB = 0x000F; // pull-up on RB3 to RB0
 
@@ -1693,9 +1696,6 @@ void __attribute__((section("usercode"))) run()
 
 		text_string(32, 24, text_menu_4);
 	}
-
-	unsigned int buttons;
-	unsigned int bottom_cursor = 1920;
 
 	while (1)
 	{
@@ -2006,7 +2006,7 @@ void __attribute__((section("usercode"))) run()
 		{
 			term_print = 0;
 
-			if (term_setting_cursor > 0 && term_cursor < bottom_cursor) 
+			if (display_cursor > 0 && term_cursor < bottom_cursor) 
 			{
 				term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = ((term_memory[(term_scroll*80+term_cursor)%term_bottom_text] + 0x80) & 0x00FF);
 			}
@@ -2040,6 +2040,12 @@ void __attribute__((section("usercode"))) run()
 				else if (term_keycode[0] == 0x0D) // return
 				{
 					term_cursor -= (term_cursor % 80);
+
+					if (term_setting_legacy == 0) // also line feed
+					{
+						term_cursor -= (term_cursor % 80);
+						if (term_cursor < bottom_cursor) term_cursor += 80;
+					}
 				}
 				else if (term_keycode[0] >= 0x20 && term_keycode[0] < 0x7F) // regular characters
 				{
@@ -2056,6 +2062,11 @@ void __attribute__((section("usercode"))) run()
 				else if (term_keycode[0] == 0x7F) // delete
 				{
 					// do nothing
+
+					if (term_setting_legacy == 0) // also backspace
+					{
+						if ((term_cursor % 80) > 1) term_cursor--;
+					}
 				}
 				else if (term_keycode[0] >= 0x80 && term_keycode[0] < 0xA0) // remappable characters
 				{
@@ -2798,6 +2809,20 @@ void __attribute__((section("usercode"))) run()
 					term_command = 0;
 					term_sequence = 0;
 				}
+				else if (term_sequence == 2 && term_keycode[2] == 'L')
+				{
+					term_setting_legacy = 1 - term_setting_legacy;
+
+					term_command = 0;
+					term_sequence = 0;
+				}
+				else if (term_sequence == 3 && term_keycode[3] == 'L')
+				{
+					term_setting_legacy = (int)(term_keycode[term_sequence-1]-'0');
+					
+					term_command = 0;
+					term_sequence = 0;
+				}
 				else if (term_sequence == 2 && term_keycode[2] == 'E')
 				{
 					term_setting_echo = 1 - term_setting_echo;
@@ -2912,7 +2937,7 @@ void __attribute__((section("usercode"))) run()
 				}
 			}
 
-			if (term_setting_cursor > 0 && term_cursor < term_bottom_text) 
+			if (display_cursor > 0 && term_cursor < term_bottom_text) 
 			{
 				term_memory[(term_scroll*80+term_cursor)%term_bottom_text] = ((term_memory[(term_scroll*80+term_cursor)%term_bottom_text] + 0x80) & 0x00FF);
 			}
