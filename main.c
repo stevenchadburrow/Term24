@@ -117,7 +117,8 @@ volatile unsigned int __attribute__((address(0x2AF2))) term_game_counter_high;
 volatile unsigned int __attribute__((address(0x2AF4))) term_game_points;
 volatile unsigned int __attribute__((address(0x2AF6))) term_game_tally;
 volatile unsigned int __attribute__((address(0x2AF8))) term_game_seed;
-// unused memory here
+volatile unsigned int __attribute__((address(0x2AFA))) term_game_bit;
+volatile unsigned int __attribute__((address(0x2AFC))) term_unused[2]; // unused memory
 volatile unsigned char __attribute__((address(0x2B00))) term_ps2_conversion[256];
 volatile unsigned int __attribute__((address(0x2C00))) term_array[256];
 // unused memory here (generally used by heap, 512 bytes)
@@ -359,6 +360,8 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_
 	" ESC[xS   = Scroll Up            $5000-7FFF = Text/Color Data                   " };
 const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_12[80] = {
 	" ESC[xT   = Scroll Down          $8000-DFFF = EDS Color Data                    " };
+const __prog__ char __attribute__((space(prog), section("usercode"))) text_help_13[80] = {
+	"Firmware Update on Reset if PA0-PA3 grounded, send Intel HEX at 9600-8-N-1.     " };
 
 
 void __attribute__((section("usercode"))) color_character(int x, int y, unsigned char c)
@@ -624,42 +627,24 @@ const __prog__ char __attribute__((space(prog), section("usercode"))) game_bags[
 	4, 1, 2, 3, 0, 6, 5,
 };
 
-void __attribute__((section("usercode"))) play()
+void __attribute__((section("usercode"))) game_color()
 {
-	term_game_seed = 0;
+	// turn on colors
+	TRISB = (TRISB & 0x00FF) | 0x8000;
+	PORTB = (PORTB & 0x00FF) | 0x0000;
 
-	CNPUA = 0x000F; // pull-up on RA3 to RA0
-	CNPUB = (CNPUB | 0x000C); // pull-ups on RB3 and RB2
+	term_orientation = 2; // layered
+	term_scroll = 0; // no scrolling
+	term_bottom_color = 576-1; // usually 768-1 by default
 
-	if (term_mode == 0)
+	for (int i=0; i<12288; i++)
 	{
-		// turn off colors
-		TRISB = (TRISB & 0x00FF) | 0x7F00;
-		PORTB = (PORTB & 0x00FF) | 0x0000;
-
-		term_bottom_color = 600-1; // usually 768-1 by default
-
-		for (int i=0; i<2048; i++) term_memory[i] = ' ';
+		term_memory[i+0x1800] = 0x00;
 	}
-	else if (term_mode == 1)
+
+	for (int i=0; i<20480; i++)
 	{
-		// turn on colors
-		TRISB = (TRISB & 0x00FF) | 0x8000;
-		PORTB = (PORTB & 0x00FF) | 0x0000;
-
-		term_orientation = 2; // layered
-		term_scroll = 0; // no scrolling
-		term_bottom_color = 576-1; // usually 768-1 by default
-
-		for (int i=0; i<12288; i++)
-		{
-			term_memory[i+0x1800] = 0x00;
-		}
-
-		for (int i=0; i<20480; i++)
-		{
-			term_color_eds[i] = 0x00;
-		}
+		term_color_eds[i] = 0x00;
 	}
 
 	for (int y=0; y<24; y++)
@@ -714,69 +699,34 @@ void __attribute__((section("usercode"))) play()
 
 	for (int i=0; i<7; i++) bag[i] = (unsigned char)(i);
 
-	if (term_mode == 0)
+	color_character(56+color_shift, 1, 'P');
+	color_character(62+color_shift, 1, 'T');
+	color_character(68+color_shift, 1, 'S');
+	color_character(74+color_shift, 1, ':');
+	color_character(80+color_shift, 1, ' ');
+	color_character(86+color_shift, 1, '0');
+	color_character(92+color_shift, 1, '0');
+	color_character(98+color_shift, 1, '0');
+	color_character(104+color_shift, 1, '0');
+
+	color_character(56+color_shift, 9, 'N');
+	color_character(62+color_shift, 9, 'E');
+	color_character(68+color_shift, 9, 'X');
+	color_character(74+color_shift, 9, 'T');
+	color_character(80+color_shift, 9, ':');
+	color_character(86+color_shift, 9, ' ');
+
+	switch (term_game_piece_next)
 	{
-		text_character(18+text_shift, 1, 'P');
-		text_character(19+text_shift, 1, 'T');
-		text_character(20+text_shift, 1, 'S');
-		text_character(21+text_shift, 1, ':');
-		text_character(22+text_shift, 1, ' ');
-		text_character(23+text_shift, 1, '0');
-		text_character(24+text_shift, 1, '0');
-		text_character(25+text_shift, 1, '0');
-		text_character(26+text_shift, 1, '0');
-
-		text_character(18+text_shift, 3, 'N');
-		text_character(19+text_shift, 3, 'E');
-		text_character(20+text_shift, 3, 'X');
-		text_character(21+text_shift, 3, 'T');
-		text_character(22+text_shift, 3, ':');
-		text_character(23+text_shift, 3, ' ');
-
-		switch (term_game_piece_next)
-		{
-			case 0: { text_character(24+text_shift, 3, 'I'); break; }
-			case 1: { text_character(24+text_shift, 3, 'J'); break; }
-			case 2: { text_character(24+text_shift, 3, 'L'); break; }
-			case 3: { text_character(24+text_shift, 3, 'O'); break; }
-			case 4: { text_character(24+text_shift, 3, 'S'); break; }
-			case 5: { text_character(24+text_shift, 3, 'Z'); break; }
-			case 6: { text_character(24+text_shift, 3, 'T'); break; }
-			case 7: { text_character(24+text_shift, 3, '?'); break; }
-			default: { text_character(24+text_shift, 3, '?'); break; }
-		}
-	}
-	else if (term_mode == 1)
-	{
-		color_character(56+color_shift, 1, 'P');
-		color_character(62+color_shift, 1, 'T');
-		color_character(68+color_shift, 1, 'S');
-		color_character(74+color_shift, 1, ':');
-		color_character(80+color_shift, 1, ' ');
-		color_character(86+color_shift, 1, '0');
-		color_character(92+color_shift, 1, '0');
-		color_character(98+color_shift, 1, '0');
-		color_character(104+color_shift, 1, '0');
-
-		color_character(56+color_shift, 9, 'N');
-		color_character(62+color_shift, 9, 'E');
-		color_character(68+color_shift, 9, 'X');
-		color_character(74+color_shift, 9, 'T');
-		color_character(80+color_shift, 9, ':');
-		color_character(86+color_shift, 9, ' ');
-
-		switch (term_game_piece_next)
-		{
-			case 0: { color_character(92+color_shift, 9, 'I'); break; }
-			case 1: { color_character(92+color_shift, 9, 'J'); break; }
-			case 2: { color_character(92+color_shift, 9, 'L'); break; }
-			case 3: { color_character(92+color_shift, 9, 'O'); break; }
-			case 4: { color_character(92+color_shift, 9, 'S'); break; }
-			case 5: { color_character(92+color_shift, 9, 'Z'); break; }
-			case 6: { color_character(92+color_shift, 9, 'T'); break; }
-			case 7: { color_character(92+color_shift, 9, '?'); break; }
-			default: { color_character(92+color_shift, 9, '?'); break; }
-		}
+		case 0: { color_character(92+color_shift, 9, 'I'); break; }
+		case 1: { color_character(92+color_shift, 9, 'J'); break; }
+		case 2: { color_character(92+color_shift, 9, 'L'); break; }
+		case 3: { color_character(92+color_shift, 9, 'O'); break; }
+		case 4: { color_character(92+color_shift, 9, 'S'); break; }
+		case 5: { color_character(92+color_shift, 9, 'Z'); break; }
+		case 6: { color_character(92+color_shift, 9, 'T'); break; }
+		case 7: { color_character(92+color_shift, 9, '?'); break; }
+		default: { color_character(92+color_shift, 9, '?'); break; }
 	}
 
 	while (1)
@@ -1228,113 +1178,90 @@ void __attribute__((section("usercode"))) play()
 
 		if (redraw > 0) // redraw screen
 		{
-			if (term_mode == 0)
+			for (int y=0; y<24; y++)
 			{
-				for (int y=0; y<24; y++)
+				for (int x=0; x<16; x++)
 				{
-					for (int x=0; x<16; x++)
+					if (term_game_field[y*16+x] == ' ')
 					{
-						term_memory[y*80+x+text_shift] = term_game_field[y*16+x];
+						for (int i=0; i<color_scale; i++)
+						{
+							for (int j=0; j<color_scale; j++)
+							{
+								term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x00;
+							}
+						}
 					}
-				}
-
-				for (int y=0; y<4; y++)
-				{
-					for (int x=0; x<4; x++)
+					else if (term_game_field[y*16+x] == '#')
 					{
-						loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
-
-						if (game_pieces[loc] != ' ') term_memory[(y+term_game_piece_y)*80+(x+term_game_piece_x)+text_shift] = game_pieces[loc];
+						for (int i=0; i<color_scale; i++)
+						{
+							for (int j=0; j<color_scale; j++)
+							{
+								if (i == 0 || j == 0)
+								{
+									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x15;
+								}
+								else
+								{
+									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x2A;
+								}
+							}
+						}
+					}
+					else
+					{
+						for (int i=0; i<color_scale; i++)
+						{
+							for (int j=0; j<color_scale; j++)
+							{
+								term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x7F;
+							}
+						}
 					}
 				}
 			}
-			else if (term_mode == 1)
+
+			switch (term_game_piece_current)
 			{
-				for (int y=0; y<24; y++)
+				case 0: { color_value = 0x4F; break; } // I = cyan
+				case 1: { color_value = 0x43; break; } // J = blue
+				case 2: { color_value = 0x6A; break; } // L = light grey
+				case 3: { color_value = 0x7C; break; } // O = yellow
+				case 4: { color_value = 0x4C; break; } // S = green
+				case 5: { color_value = 0x70; break; } // Z = red
+				case 6: { color_value = 0x73; break; } // T = magenta
+				case 7: { color_value = 0x7F; break; } 
+				default: { color_value = 0x7F; break; }
+			}
+
+			for (int y=0; y<24*color_scale; y++)
+			{
+				for (int x=0; x<16*color_scale; x++)
 				{
-					for (int x=0; x<16; x++)
-					{
-						if (term_game_field[y*16+x] == ' ')
-						{
-							for (int i=0; i<color_scale; i++)
-							{
-								for (int j=0; j<color_scale; j++)
-								{
-									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x00;
-								}
-							}
-						}
-						else if (term_game_field[y*16+x] == '#')
-						{
-							for (int i=0; i<color_scale; i++)
-							{
-								for (int j=0; j<color_scale; j++)
-								{
-									if (i == 0 || j == 0)
-									{
-										term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x15;
-									}
-									else
-									{
-										term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x2A;
-									}
-								}
-							}
-						}
-						else
-						{
-							for (int i=0; i<color_scale; i++)
-							{
-								for (int j=0; j<color_scale; j++)
-								{
-									term_memory[(y*color_scale+i)*128+(x*color_scale+j)+color_shift+0x1800] = 0x7F;
-								}
-							}
-						}
-					}
+					term_color_eds[y*128+x+color_shift+4096] = 0x00;
 				}
+			}
 
-				switch (term_game_piece_current)
+			for (int y=0; y<4; y++)
+			{
+				for (int x=0; x<4; x++)
 				{
-					case 0: { color_value = 0x4F; break; } // I = cyan
-					case 1: { color_value = 0x43; break; } // J = blue
-					case 2: { color_value = 0x6A; break; } // L = light grey
-					case 3: { color_value = 0x7C; break; } // O = yellow
-					case 4: { color_value = 0x4C; break; } // S = green
-					case 5: { color_value = 0x70; break; } // Z = red
-					case 6: { color_value = 0x73; break; } // T = magenta
-					case 7: { color_value = 0x7F; break; } 
-					default: { color_value = 0x7F; break; }
-				}
+					loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
 
-				for (int y=0; y<24*color_scale; y++)
-				{
-					for (int x=0; x<16*color_scale; x++)
+					if (game_pieces[loc] != ' ')
 					{
-						term_color_eds[y*128+x+color_shift+4096] = 0x00;
-					}
-				}
-
-				for (int y=0; y<4; y++)
-				{
-					for (int x=0; x<4; x++)
-					{
-						loc = term_game_piece_current*64+term_game_piece_rot*16+y*4+x;
-
-						if (game_pieces[loc] != ' ')
+						for (int i=0; i<color_scale; i++)
 						{
-							for (int i=0; i<color_scale; i++)
+							for (int j=0; j<color_scale; j++)
 							{
-								for (int j=0; j<color_scale; j++)
+								if (i == 0 || j == 0)
 								{
-									if (i == 0 || j == 0)
-									{
-										term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = (color_value & 0x3F);
-									}
-									else
-									{
-										term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = color_value;
-									}
+									term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = (color_value & 0x3F);
+								}
+								else
+								{
+									term_color_eds[((y+term_game_piece_y)*color_scale+i)*128+((x+term_game_piece_x)*color_scale+j)+color_shift+4096] = color_value;
 								}
 							}
 						}
@@ -1348,6 +1275,37 @@ void __attribute__((section("usercode"))) play()
 		// wait for v-blank
 		while (term_scanline > 0) { }
 		while (term_scanline <= term_bottom_color) { }
+	}
+};
+
+void __attribute__((section("usercode"))) game_text()
+{
+	// turn off colors
+	TRISB = (TRISB & 0x00FF) | 0x7F00;
+	PORTB = (PORTB & 0x00FF) | 0x0000;
+
+	term_bottom_text = 0x0780; // default
+	term_scroll = 0;
+
+	for (int i=0; i<8192; i++) term_memory[i] = 0x00;
+
+	while (1) { }
+};
+
+void __attribute__((section("usercode"))) game_play()
+{
+	term_game_seed = 0;
+
+	CNPUA = 0x000F; // pull-up on RA3 to RA0
+	CNPUB = (CNPUB | 0x000C); // pull-ups on RB3 and RB2
+
+	if (term_mode == 0)
+	{
+		game_text();
+	}
+	else if (term_mode == 1)
+	{
+		game_color();
 	}
 };
 
@@ -1715,7 +1673,7 @@ void __attribute__((section("usercode"))) run()
 				if ((buttons & 0x0004) == 0x0000) term_mode = 0; // text mode
 				if ((buttons & 0x0008) == 0x0000) term_mode = 1; // color mode
 
-				play(); // play game
+				game_play(); // play game
 		
 				while (1) { } // infinite loop
 			}
@@ -1810,7 +1768,7 @@ void __attribute__((section("usercode"))) run()
 							if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x05) term_mode = 0; // text mode
 							else if ((term_array[(term_position & 0x00FF)] & 0x00FF) == 0x06) term_mode = 1; // color mode
 
-							play(); // play game
+							game_play(); // play game
 
 							while (1) { } // infinite loop
 						}
@@ -2692,6 +2650,7 @@ void __attribute__((section("usercode"))) run()
 							case 10: { for (int j=0; j<80; j++) { s[j] = text_help_10[j]; } break; }
 							case 11: { for (int j=0; j<80; j++) { s[j] = text_help_11[j]; } break; }
 							case 12: { for (int j=0; j<80; j++) { s[j] = text_help_12[j]; } break; }
+							case 13: { for (int j=0; j<80; j++) { s[j] = text_help_13[j]; } break; }
 							default: { break; }
 						}
 
